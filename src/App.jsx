@@ -1,11 +1,12 @@
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState, useRef } from 'react'
 import * as THREE from 'three'
 import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare.js'
 import { Model as World } from './app/models/Minecraft_world'
 import { Model as Chest } from './app/models/Minecraft-chest'
 import { CloudSky } from './CloudSky'
+import { ChestInventory } from './components/ChestInventory'
 
 const SUN_POSITION = new THREE.Vector3(-100, 25, 50)
 
@@ -43,10 +44,18 @@ function SunFlare() {
 }
 
 function App() {
+  const [chestOpen, setChestOpen] = useState(false)
+  const chestRef = useRef()
+
+  function handleClose() {
+    setChestOpen(false)
+    chestRef.current?.closeChest()
+  }
+
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Canvas
-        shadows
+        shadows={THREE.PCFShadowMap}
         camera={{ position: [0, 10, 7], fov: 70 }}
         gl={{
           toneMapping: THREE.ACESFilmicToneMapping,
@@ -78,11 +87,27 @@ function App() {
 
         <Suspense fallback={null}>
           <World scale={50} position={[0, 0, 0]} />
-          <Chest position={[0, 7.4, 0]} />
-
+          <Chest ref={chestRef} position={[0, 7.4, 0]} onToggle={setChestOpen} />
+          {!chestOpen && <Html position={[0, 9.5, 0]} center>
+            <div style={{
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: '14px',
+              color: '#fff',
+              textShadow: '2px 2px 0 #000',
+              textAlign: 'center',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+              userSelect: 'none',
+            }}>
+              Лабы здесь<br />↓
+            </div>
+          </Html>}
         </Suspense>
+
         <OrbitControls target={[0, 7.4, 0]} maxPolarAngle={Math.PI / 2} />
       </Canvas>
+
+      <ChestInventory open={chestOpen} onClose={handleClose} />
     </div>
   )
 }

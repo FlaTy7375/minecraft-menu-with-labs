@@ -1,0 +1,71 @@
+.inventory-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.inventory-window {
+  width: 70%;
+  max-width: 700px;
+  background: #c6c6c6;
+  border: 3px solid;
+  border-color: #fff #555 #555 #fff;
+  padding: 16px;
+  position: relative;
+  image-rendering: pixelated;
+  font-family: 'Courier New', monospace;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.inventory-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: #c6c6c6;
+  border: 2px solid;
+  border-color: #fff #555 #555 #fff;
+  color: #3f3f3f;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.inventory-close:hover { background: #d6d6d6; }
+.inventory-close:active { border-color: #555 #fff #fff #555; }
+
+.inventory-section-title {
+  font-size: 18px;
+  color: #3f3f3f;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 2px;
+}
+
+.inventory-slot {
+  aspect-ratio: 1 / 1;
+  background: #8b8b8b;
+  border: 2px solid;
+  border-color: #373737 #fff #fff #373737;
+  box-shadow: inset 1px 1px 0 #000;
+  cursor: pointer;
+  min-width: 0;
+  min-height: 0;
+}
+
+.inventory-slot:hover { background: #9f9f9f; }
+.inventory-slot:active { border-color: #fff #373737 #373737 #fff; }
