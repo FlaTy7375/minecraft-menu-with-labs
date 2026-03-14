@@ -6,11 +6,15 @@ import { Model as World } from './app/models/Minecraft_world'
 import { Model as Desert } from './app/models/Minecraft_dessert'
 import { Model as Snow } from './app/models/Minecraft_snow'
 import { Model as Torch } from './app/models/Minecraft_torch'
+import { Model as Jungle } from './app/models/Minecraft_jungle'
 import { Model as Chest } from './app/models/Minecraft-chest'
 import { CloudSky } from './app/textures/CloudSky'
 import { DesertSky } from './app/textures/DesertSky'
 import { SnowSky } from './app/textures/SnowSky'
+import { JungleSky } from './app/textures/JungleSky'
 import { Snowfall } from './app/components/Snowfall'
+import { Rainfall } from './app/components/Rainfall'
+import { Thunder } from './app/components/Thunder'
 import { ChestInventory } from './app/components/ChestInventory/ChestInventory'
 import { MusicPlayer } from './app/components/music/MusicPlayer'
 import { StartScreen } from './app/components/StartScreen/StartScreen'
@@ -23,6 +27,7 @@ const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 const CAM_DEFAULT = new THREE.Vector3(0, 10, 7)
 const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
 const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
+const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
 
 function CameraController({ activeWorld, controlsRef }) {
   const { camera } = useThree()
@@ -32,7 +37,8 @@ function CameraController({ activeWorld, controlsRef }) {
 
   const camForWorld = (w) => {
     if (w === 'desert') return CAM_DESERT
-    if (w === 'snow') return CAM_SNOW
+    if (w === 'snow')   return CAM_SNOW
+    if (w === 'jungle') return CAM_JUNGLE
     return CAM_DEFAULT
   }
   useFrame(() => {
@@ -120,6 +126,7 @@ function ToneMappingUpdater({ activeWorld }) {
   useEffect(() => {
     if (activeWorld === 'desert') gl.toneMappingExposure = 1.0
     else if (activeWorld === 'snow') gl.toneMappingExposure = 1.3
+    else if (activeWorld === 'jungle') gl.toneMappingExposure = 0.5
     else gl.toneMappingExposure = 2.2
   }, [activeWorld, gl])
   return null
@@ -128,16 +135,17 @@ function ToneMappingUpdater({ activeWorld }) {
 function SceneLighting({ activeWorld }) {
   const isDesert = activeWorld === 'desert'
   const isSnow   = activeWorld === 'snow'
+  const isJungle = activeWorld === 'jungle'
   const sunPos   = isDesert ? DESERT_SUN : isSnow ? MOON_POS : SUNSET_SUN
 
   return (
     <>
-      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : <CloudSky />}
+      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : <CloudSky />}
 
       <directionalLight
         position={sunPos}
-        intensity={isDesert ? 5 : isSnow ? 0 : 8}
-        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : '#ff7000'}
+        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : 8}
+        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : '#ff7000'}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-near={0.1}
@@ -156,16 +164,30 @@ function SceneLighting({ activeWorld }) {
               <hemisphereLight args={['#1a2540', '#0a0f1e', 1.2]} />
               <ambientLight intensity={0.15} color="#2a3555" />
             </>
-          : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
+          : isJungle
+            ? <hemisphereLight args={['#606060', '#303030', 0.6]} />
+            : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
       }
 
-      {!isDesert && !isSnow && <SunFlare />}
+      {!isDesert && !isSnow && !isJungle && <SunFlare />}
       {isSnow && (
         <>
           <Snowfall />
           <fog attach="fog" args={['#0a0f1e', 60, 140]} />
         </>
       )}
+      {isJungle && (
+        <>
+          <Rainfall />
+          <fog attach="fog" args={['#282828', 18, 65]} />
+          {/* Солнечный пробив сквозь облака — тёплый закатный */}
+          <directionalLight position={[15, 20, -10]} color="#ff9944" intensity={1.2} castShadow={false} />
+          {/* Слабый свет со стороны открытия сундука */}
+          <pointLight position={[0, 0, 3]} color="#aabbaa" intensity={0.07} distance={10} decay={-40} castShadow={false} />
+        </>
+      )}
+      {/* Thunder всегда в сцене — управляет звуком дождя через active prop */}
+      <Thunder active={isJungle} />
     </>
   )
 }
@@ -197,7 +219,7 @@ function App() {
         dpr={Math.min(window.devicePixelRatio, 1.5)}
         gl={{
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: isDesert ? 1.0 : 2.2,
+          toneMappingExposure: activeWorld === 'desert' ? 1.0 : activeWorld === 'jungle' ? 0.5 : 2.2,
           outputColorSpace: THREE.SRGBColorSpace,
           powerPreference: 'high-performance',
           antialias: false,
@@ -219,6 +241,9 @@ function App() {
             <Snow scale={1.9} position={[96.03, -166.6, 0.9]} />
             <Torch scale={0.13} position={[1.8, 6.4, 3]} />
           </group>
+          <group visible={activeWorld === 'jungle'}>
+            <Jungle scale={116} position={[95.8, -80.45, -71.8]} />
+          </group>
           {activeWorld === 'snow' && (
             <>
               <TorchLight />
@@ -229,7 +254,7 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : 0, 0]} onToggle={setChestOpen} />
           {!chestOpen && started && (
             <Html position={[0, 9.5, 0]} center>
               <div style={{
@@ -254,11 +279,16 @@ function App() {
       <ChestInventory open={chestOpen} onClose={handleClose} onSelectWorld={handleSelectWorld} activeWorld={activeWorld} />
       {activeWorld === 'snow' && (
         <div style={{
-          position: 'absolute',
-          inset: 0,
+          position: 'absolute', inset: 0,
           background: 'linear-gradient(to top, rgba(74,106,138,0.18) 0%, transparent 40%)',
-          pointerEvents: 'none',
-          zIndex: 1,
+          pointerEvents: 'none', zIndex: 1,
+        }} />
+      )}
+      {activeWorld === 'jungle' && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(180,185,188,0.25) 0%, transparent 50%)',
+          pointerEvents: 'none', zIndex: 1,
         }} />
       )}
       <MusicPlayer autoPlay={started} />

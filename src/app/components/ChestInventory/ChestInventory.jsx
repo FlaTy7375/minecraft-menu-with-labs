@@ -2,9 +2,10 @@ import { useState } from 'react'
 import './ChestInventory.css'
 
 const WORLDS = [
-  { id: 'default', img: '/images/dirt.webp',   label: 'Обычный мир',  desc: 'Зелёные луга и закат' },
-  { id: 'desert',  img: '/images/desert.png',  label: 'Пустыня',      desc: 'Жаркий полдень и песок' },
-  { id: 'snow',    img: '/images/snow.webp',   label: 'Снежный мир',  desc: 'Холодные просторы' },
+  { id: 'default', img: '/images/dirt.webp',    label: 'Обычный мир',  desc: 'Зелёные луга и закат' },
+  { id: 'desert',  img: '/images/desert.png',   label: 'Пустыня',      desc: 'Жаркий полдень и песок' },
+  { id: 'snow',    img: '/images/snow.webp',     label: 'Снежный мир',  desc: 'Холодные просторы' },
+  { id: 'jungle',  img: '/images/лианы.webp',   label: 'Джунгли',      desc: 'Тропический лес' },
 ]
 
 function Tooltip({ label, desc }) {
@@ -55,7 +56,7 @@ export function ChestInventory({ open, onClose, onSelectWorld, activeWorld }) {
           {WORLDS.map(w => (
             <Slot key={w.id} world={w} activeWorld={activeWorld} onSelectWorld={onSelectWorld} />
           ))}
-          {Array.from({ length: 24 }).map((_, i) => (
+          {Array.from({ length: 23 }).map((_, i) => (
             <Slot key={i + 2} />
           ))}
         </div>
