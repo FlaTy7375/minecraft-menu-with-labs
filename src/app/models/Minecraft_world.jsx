@@ -16,4 +16,4 @@ export function Model(props) {
   return <primitive object={scene} {...props} dispose={null} />
 }
 
-useGLTF.preload('/models/minecraft_world.glb')
+// Загружается лениво — только при первом рендере

@@ -1,0 +1,107 @@
+.mc-player {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+  background: #c6c6c6;
+  border: 3px solid;
+  border-color: #fff #555 #555 #fff;
+  font-family: 'Press Start 2P', monospace;
+  box-shadow: 4px 4px 0 #000;
+  min-width: 240px;
+}
+
+.mc-player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mc-player-header:hover {
+  background: #d0d0d0;
+}
+
+.mc-player-title {
+  font-size: 7px;
+  color: #3f3f3f;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.mc-player-toggle {
+  font-size: 8px;
+  color: #3f3f3f;
+  margin-left: 8px;
+}
+
+.mc-player-body {
+  padding: 0 12px 10px;
+  border-top: 2px solid #555;
+}
+
+.mc-player-controls {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.mc-btn {
+  background: #c6c6c6;
+  border: 2px solid;
+  border-color: #fff #555 #555 #fff;
+  color: #3f3f3f;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.mc-btn:hover { background: #d6d6d6; }
+.mc-btn:active {
+  border-color: #555 #fff #fff #555;
+  box-shadow: none;
+  transform: translate(1px, 1px);
+}
+
+.mc-btn-play { padding: 4px 14px; }
+
+.mc-player-seek {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mc-time {
+  font-size: 6px;
+  color: #3f3f3f;
+  white-space: nowrap;
+}
+
+.mc-range {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  background: #8b8b8b;
+  border: 2px solid;
+  border-color: #373737 #fff #fff #373737;
+  outline: none;
+  cursor: pointer;
+}
+
+.mc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 14px;
+  background: #c6c6c6;
+  border: 2px solid;
+  border-color: #fff #555 #555 #fff;
+  cursor: pointer;
+}
