@@ -10,6 +10,7 @@ import { Model as Jungle } from './app/models/Minecraft_jungle'
 import { Model as Ocean } from './app/models/Minecraft_ocean'
 import { Model as Mushroom } from './app/models/Minecraft_mushroom'
 import { Model as Nether } from './app/models/Minecraft_nether'
+import { Model as End } from './app/models/Minecraft_end'
 import { Model as Chest } from './app/models/Minecraft-chest'
 import { CloudSky } from './app/textures/CloudSky'
 import { DesertSky } from './app/textures/DesertSky'
@@ -18,11 +19,13 @@ import { JungleSky } from './app/textures/JungleSky'
 import { OceanSky } from './app/textures/OceanSky'
 import { MushroomSky } from './app/textures/MushroomSky'
 import { NetherSky } from './app/textures/NetherSky'
+import { EndSky } from './app/textures/EndSky'
 import { Snowfall } from './app/components/Snowfall'
 import { Rainfall } from './app/components/Rainfall'
 import { Bubbles } from './app/components/Bubbles'
 import { Fireflies } from './app/components/Fireflies'
 import { LavaParticles } from './app/components/LavaParticles'
+import { EndParticles } from './app/components/EndParticles'
 import { OceanAmbient } from './app/components/OceanAmbient'
 import { WindAmbient } from './app/components/WindAmbient'
 import { NetherAmbient } from './app/components/NetherAmbient'
@@ -43,6 +46,7 @@ const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
 const CAM_OCEAN    = new THREE.Vector3(7, 10, 0)
 const CAM_MUSHROOM = new THREE.Vector3(7, 10, 0)
 const CAM_NETHER   = new THREE.Vector3(-7, 10, 0)
+const CAM_END      = new THREE.Vector3(-7, 10, 0)
 
 function CameraController({ activeWorld, controlsRef }) {
   const { camera } = useThree()
@@ -57,6 +61,7 @@ function CameraController({ activeWorld, controlsRef }) {
     if (w === 'ocean')    return CAM_OCEAN
     if (w === 'mushroom') return CAM_MUSHROOM
     if (w === 'nether')   return CAM_NETHER
+    if (w === 'end')      return CAM_END
     return CAM_DEFAULT
   }
   useFrame(() => {
@@ -139,6 +144,19 @@ function TorchLight() {
   )
 }
 
+function EndCrystalLight() {
+  const lightRef = useRef()
+  useFrame(({ clock }) => {
+    if (!lightRef.current) return
+    const t = clock.getElapsedTime()
+    const pulse = 1.0 + Math.sin(t * 1.8) * 0.4 + Math.sin(t * 3.3) * 0.15
+    lightRef.current.intensity = 12 * pulse
+  })
+  return (
+    <pointLight ref={lightRef} position={[5, 18, -5]} color="#cc44ff" intensity={12} distance={55} decay={1.4} castShadow={false} />
+  )
+}
+
 function ToneMappingUpdater({ activeWorld }) {
   const { gl } = useThree()
   const getExposure = (w) => {
@@ -148,6 +166,7 @@ function ToneMappingUpdater({ activeWorld }) {
     if (w === 'ocean')    return 1.1
     if (w === 'mushroom') return 0.85
     if (w === 'nether')   return 0.7
+    if (w === 'end')      return 0.75
     return 2.2
   }
   useFrame(() => {
@@ -163,16 +182,17 @@ function SceneLighting({ activeWorld }) {
   const isOcean    = activeWorld === 'ocean'
   const isMushroom = activeWorld === 'mushroom'
   const isNether   = activeWorld === 'nether'
-  const sunPos     = isDesert ? DESERT_SUN : isSnow ? MOON_POS : isOcean ? new THREE.Vector3(80, 30, 0) : isMushroom ? new THREE.Vector3(60, 8, 40) : SUNSET_SUN
+  const isEnd      = activeWorld === 'end'
+  const sunPos     = isDesert ? DESERT_SUN : isSnow ? MOON_POS : isOcean ? new THREE.Vector3(80, 30, 0) : isMushroom ? new THREE.Vector3(60, 8, 40) : isEnd ? new THREE.Vector3(0, 50, 0) : SUNSET_SUN
 
   return (
     <>
-      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : isOcean ? <OceanSky /> : isMushroom ? <MushroomSky /> : isNether ? <NetherSky /> : <CloudSky />}
+      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : isOcean ? <OceanSky /> : isMushroom ? <MushroomSky /> : isNether ? <NetherSky /> : isEnd ? <EndSky /> : <CloudSky />}
 
       <directionalLight
         position={sunPos}
-        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : isOcean ? 4 : isMushroom ? 1.8 : isNether ? 2 : 8}
-        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : isOcean ? '#88bbff' : isMushroom ? '#ffaacc' : isNether ? '#ff4400' : '#ff7000'}
+        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : isOcean ? 4 : isMushroom ? 1.8 : isNether ? 2 : isEnd ? 1.5 : 8}
+        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : isOcean ? '#88bbff' : isMushroom ? '#ffaacc' : isNether ? '#ff4400' : isEnd ? '#cc99ff' : '#ff7000'}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-near={0.1}
@@ -199,10 +219,12 @@ function SceneLighting({ activeWorld }) {
                 ? <hemisphereLight args={['#ddaacc', '#3a1a2a', 1.2]} />
                 : isNether
                   ? <hemisphereLight args={['#cc2200', '#1a0000', 1.5]} />
-                  : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
+                  : isEnd
+                    ? <hemisphereLight args={['#3a1a66', '#0a0018', 1.6]} />
+                    : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
       }
 
-      {!isDesert && !isSnow && !isJungle && !isOcean && !isMushroom && !isNether && <SunFlare />}
+      {!isDesert && !isSnow && !isJungle && !isOcean && !isMushroom && !isNether && !isEnd && <SunFlare />}
       {isSnow && (
         <>
           <Snowfall />
@@ -233,6 +255,22 @@ function SceneLighting({ activeWorld }) {
           <pointLight position={[0, 0, 0]} color="#ff6600" intensity={25} distance={50} decay={1.2} castShadow={false} />
           <pointLight position={[10, 5, -10]} color="#ff4400" intensity={10} distance={35} decay={1.5} castShadow={false} />
           <LavaParticles />
+        </>
+      )}
+      {isEnd && (
+        <>
+          <fog attach="fog" args={['#0a0015', 50, 180]} />
+          {/* Кристалл эндера — пульсирующий фиолетовый свет */}
+          <EndCrystalLight />
+          {/* Портал дракона — слабое зелёное свечение снизу */}
+          <pointLight position={[0, 2, 0]} color="#00ff88" intensity={3} distance={20} decay={2} castShadow={false} />
+          {/* Общий холодный фиолетовый fill */}
+          <pointLight position={[-10, 15, 10]} color="#9933ff" intensity={6} distance={60} decay={1.5} castShadow={false} />
+          {/* Свет на сундук спереди */}
+          <pointLight position={[-7, 10, 0]} color="#bb88ff" intensity={18} distance={25} decay={1.5} castShadow={false} />
+          {/* Ambient для видимости дальних объектов */}
+          <ambientLight intensity={0.38} color="#4422aa" />
+          <EndParticles />
         </>
       )}
       {isOcean && (
@@ -316,6 +354,9 @@ function App() {
           <group visible={activeWorld === 'nether'}>
             <Nether scale={155} position={[54.17, 3.29, 44.25]} />
           </group>
+          <group visible={activeWorld === 'end'}>
+            <End scale={160} position={[98.15, -43, 67]} />
+          </group>
           {activeWorld === 'snow' && (
             <>
               <TorchLight />
@@ -326,7 +367,7 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
           {!chestOpen && started && (
             <Html position={[0, 9.5, 0]} center>
               <div style={{
@@ -408,6 +449,30 @@ function App() {
           <div style={{
             position: 'absolute', inset: 0,
             background: 'rgba(0, 30, 80, 0.25)',
+            pointerEvents: 'none', zIndex: 1,
+          }} />
+        </>
+      )}
+      {activeWorld === 'end' && (
+        <>
+          {/* Пульсирующий фиолетовый виньет */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse at center, transparent 30%, rgba(30,0,60,0.65) 100%)',
+            pointerEvents: 'none', zIndex: 1,
+            animation: 'endPulse 3s ease-in-out infinite alternate',
+          }} />
+          {/* Свечение сверху — как от кристаллов */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse at 50% 0%, rgba(140,0,255,0.18) 0%, transparent 60%)',
+            pointerEvents: 'none', zIndex: 1,
+            animation: 'endPulse 2.2s ease-in-out infinite alternate-reverse',
+          }} />
+          {/* Зелёный отблеск снизу — портал */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to top, rgba(0,180,80,0.12) 0%, transparent 35%)',
             pointerEvents: 'none', zIndex: 1,
           }} />
         </>
