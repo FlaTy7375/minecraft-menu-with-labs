@@ -35,12 +35,11 @@ void main() {
   vec3 skyTop    = vec3(0.02, 0.06, 0.18);
   vec3 skyColor  = mix(skyBottom, skyTop, t);
 
-  // Звёзды — только в просветах между облаками
+  // Звёзды — только в просветах между облаками (применяются ниже)
   vec2 uvStar = dir.xz / max(dir.y, 0.01);
   float star = hash(floor(uvStar * 90.0));
   float twinkle = 0.5 + 0.5 * sin(uTime * 2.0 + star * 6.28);
   star = step(0.994, star) * twinkle * smoothstep(0.1, 0.4, dir.y);
-  skyColor += vec3(star * 0.85);
 
   // Луна
   vec3 moonDir = normalize(vec3(0.0, 0.55, -0.85));
@@ -56,7 +55,10 @@ void main() {
   vec3 cloudColor = vec3(0.08, 0.10, 0.18);
   skyColor = mix(skyColor, cloudColor, cloudMask * 0.85);
   // Убираем звёзды за облаками
-  skyColor -= vec3(star) * cloudMask;
+  float starFinal = star * (1.0 - cloudMask);
+  skyColor += vec3(starFinal * 0.85);
+  // Clamp чтобы туман не давал чёрных артефактов
+  skyColor = max(skyColor, vec3(0.02, 0.05, 0.15));
 
   gl_FragColor = vec4(skyColor, 1.0);
 }

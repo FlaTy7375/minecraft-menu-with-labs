@@ -22,3 +22,37 @@ body {
   0%   { opacity: 0.7; }
   100% { opacity: 1.0; }
 }
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+.arrow-bounce {
+  margin-top: 10px;
+  display: inline-block;
+  animation: arrowBounce 0.6s ease-in-out infinite, mcTextPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mcTextPulse {
+  0%, 100% { color: #fff; text-shadow: 2px 2px 0 #000; }
+  50%       { color: #f2f27c; text-shadow: 2px 2px 0 #555500, 0 0 8px #ffff00; }
+}
+.mc-label-pulse {
+  animation: mcTextPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mcIntro {
+  0%   { opacity: 0; transform: scale(0.85) translateY(12px); }
+  60%  { opacity: 1; transform: scale(1.04) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes mcFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+.mc-welcome-intro {
+  animation: mcIntro 2.2s cubic-bezier(0.2, 1, 0.36, 1) both,
+             mcFloat 8s ease-in-out 2.2s infinite;
+}
+
+

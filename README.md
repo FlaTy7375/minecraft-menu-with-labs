@@ -1,16 +1,68 @@
-# React + Vite
+# 🎮 Minecraft Menu — Портфолио лабораторных работ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Интерактивное 3D-меню в стиле Minecraft для просмотра лабораторных работ по веб-разработке.  
+Построено на React + Three.js с атмосферными мирами, анимациями и звуковым сопровождением.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌍 Миры
 
-## React Compiler
+Каждая локация — отдельная атмосфера со своим освещением, эффектами и музыкой:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Мир | Особенности |
+|-----|-------------|
+| 🌅 **Стартовая** | Закатное небо, тёплое освещение |
+| 🏜️ **Пустыня** | Яркое солнце, песчаные тона |
+| ❄️ **Снег** | Ночь, луна, факел с мерцанием, снегопад |
+| 🌿 **Джунгли** | Дождь, гроза, туман, светлячки |
+| 🌊 **Океан** | Подводный туман, каустики, пузыри |
+| 🍄 **Грибной остров** | Розовый туман, светлячки, виньет |
+| 🔥 **Ад** | Лава, красное свечение, частицы |
+| 🌌 **Энд** | Фиолетовый пульс, кристаллы, порталы |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🧰 Стек
+
+- **React 18** + **Vite**
+- **Three.js** + **@react-three/fiber** + **@react-three/drei**
+- **GLTF / Draco** — сжатые 3D-модели
+- **Web Audio API** — фоновая музыка и звуки окружения
+- **CSS анимации** — шрифт `Press Start 2P`, майнкрафт-стиль
+
+---
+
+## 🚀 Запуск
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 📁 Структура
+
+```
+src/
+├── App.jsx                  # Главный компонент, сцена, камера
+├── app/
+│   ├── models/              # 3D-модели миров и объектов
+│   ├── textures/            # Скайбоксы для каждого мира
+│   └── components/          # Эффекты, музыка, инвентарь сундука
+public/
+├── models/                  # .glb файлы
+├── sounds/                  # Музыка и звуки окружения
+└── images/                  # Текстуры и иконки
+```
+
+---
+
+## ✨ Фичи
+
+- Плавная анимация камеры при смене мира
+- Сундук с инвентарём — навигация по лабам
+- Кварцевая стена с модальным окном
+- Фоновая музыка с автопереключением треков
+- Адаптивный интерфейс для мобильных устройств
+- Атмосферные звуки: дождь, гром, ветер, лава, вода

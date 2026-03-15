@@ -3,6 +3,7 @@ import { OrbitControls, Html } from '@react-three/drei'
 import { Suspense, useEffect, useState, useRef, useMemo } from 'react'
 import * as THREE from 'three'
 import { Model as Bed } from './app/models/Minecraft_bed'
+import { Model as Blocks } from './app/models/Minecraft_blocks'
 import { Model as World } from './app/models/Minecraft_world'
 import { Model as Desert } from './app/models/Minecraft_dessert'
 import { Model as Snow } from './app/models/Minecraft_snow'
@@ -22,16 +23,16 @@ import { OceanSky } from './app/textures/OceanSky'
 import { MushroomSky } from './app/textures/MushroomSky'
 import { NetherSky } from './app/textures/NetherSky'
 import { EndSky } from './app/textures/EndSky'
-import { Snowfall } from './app/components/Snowfall'
-import { Rainfall } from './app/components/Rainfall'
-import { Bubbles } from './app/components/Bubbles'
-import { Fireflies } from './app/components/Fireflies'
-import { LavaParticles } from './app/components/LavaParticles'
-import { EndParticles } from './app/components/EndParticles'
-import { OceanAmbient } from './app/components/OceanAmbient'
-import { WindAmbient } from './app/components/WindAmbient'
-import { NetherAmbient } from './app/components/NetherAmbient'
-import { Thunder } from './app/components/Thunder'
+import { Snowfall } from './app/components/effects/Snowfall'
+import { Rainfall } from './app/components/effects/Rainfall'
+import { Bubbles } from './app/components/effects/Bubbles'
+import { Fireflies } from './app/components/effects/Fireflies'
+import { LavaParticles } from './app/components/effects/LavaParticles'
+import { EndParticles } from './app/components/effects/EndParticles'
+import { OceanAmbient } from './app/components/effects/OceanAmbient'
+import { WindAmbient } from './app/components/effects/WindAmbient'
+import { NetherAmbient } from './app/components/effects/NetherAmbient'
+import { Thunder } from './app/components/effects/Thunder'
 import { ChestInventory } from './app/components/ChestInventory/ChestInventory'
 import { MusicPlayer } from './app/components/music/MusicPlayer'
 import { StartScreen } from './app/components/StartScreen/StartScreen'
@@ -41,21 +42,33 @@ const DESERT_SUN = new THREE.Vector3(-100, 20, 40)
 const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 
 // Позиция камеры: в пустыне сундук повёрнут -90° по Y, значит "спереди" — со стороны +X
-const CAM_DEFAULT = new THREE.Vector3(0, 10, 7)
-const CAM_BED     = new THREE.Vector3(7, 10, 0)
-const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
-const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
-const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
-const CAM_OCEAN    = new THREE.Vector3(7, 10, 0)
-const CAM_MUSHROOM = new THREE.Vector3(7, 10, 0)
-const CAM_NETHER   = new THREE.Vector3(-7, 10, 0)
-const CAM_END      = new THREE.Vector3(-7, 10, 0)
+const CAM_DEFAULT = new THREE.Vector3(-4.90, 14.68, 18.40)
+const CAM_BED     = new THREE.Vector3(15.61, 10.82, 3.78)
+const CAM_DESERT  = new THREE.Vector3(-15.77, 13.68, -4.31)
+const CAM_SNOW    = new THREE.Vector3(-20.30, 12.03, -5.07)
+const CAM_JUNGLE  = new THREE.Vector3(-4.78, 13.71, 19.83)
+const CAM_OCEAN    = new THREE.Vector3(20.52, 9.51, 5.20)
+const CAM_MUSHROOM = new THREE.Vector3(19.34, 10.91, 5.14)
+const CAM_NETHER   = new THREE.Vector3(-18.68, 10.17, -4.54)
+const CAM_END      = new THREE.Vector3(-20.27, 11.24, -5.30)
 
 function CameraController({ activeWorld, controlsRef }) {
   const { camera } = useThree()
   const animating = useRef(false)
   const targetPos = useRef(new THREE.Vector3(...CAM_DEFAULT))
   const prevWorld = useRef(null)
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'l' || e.key === 'L') {
+        const p = camera.position
+        const t = controlsRef.current?.target
+        console.log(`cam: [${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}] target: [${t?.x.toFixed(2)}, ${t?.y.toFixed(2)}, ${t?.z.toFixed(2)}]`)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [camera, controlsRef])
 
   const camForWorld = (w) => {
     if (w === 'bed')    return CAM_BED
@@ -68,6 +81,9 @@ function CameraController({ activeWorld, controlsRef }) {
     if (w === 'end')      return CAM_END
     return CAM_DEFAULT
   }
+
+  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : w === 'default' ? [-4.90, 7.79, -0.15] : w === 'desert' ? [0.15, 7.81, -4.15] : w === 'snow' ? [0.16, 8.07, -4.99] : w === 'jungle' ? [-4.75, 7.74, -0.13] : w === 'ocean' ? [0.91, 6.88, 5.09] : w === 'mushroom' ? [-0.18, 7.62, 5.09] : w === 'nether' ? [-0.04, 7.72, -4.41] : w === 'end' ? [2.81, 11.24, -5.03] : [0, 7.4, 0]
+
   useFrame(() => {
     if (prevWorld.current !== activeWorld) {
       prevWorld.current = activeWorld
@@ -78,20 +94,22 @@ function CameraController({ activeWorld, controlsRef }) {
 
     if (!animating.current) return
 
+    const [tx, ty, tz] = targetForWorld(activeWorld)
     camera.position.lerp(targetPos.current, 0.15)
     if (controlsRef.current) {
-      controlsRef.current.target.set(0, 7.4, 0)
+      controlsRef.current.target.set(tx, ty, tz)
       controlsRef.current.update()
     }
     if (camera.position.distanceTo(targetPos.current) < 0.01) {
       camera.position.copy(targetPos.current)
       animating.current = false
       if (controlsRef.current) {
-        controlsRef.current.target.set(0, 7.4, 0)
+        controlsRef.current.target.set(tx, ty, tz)
         controlsRef.current.update()
         controlsRef.current.enabled = true
       }
     }
+
   })
 
   return null
@@ -121,11 +139,11 @@ function TorchGlow() {
     if (!spriteRef.current) return
     const t = clock.getElapsedTime()
     const f = 1.0 + Math.sin(t * 9.1) * 0.1 + Math.sin(t * 23.7) * 0.05 + Math.random() * 0.03
-    spriteRef.current.scale.setScalar(0.9 * f)
+    spriteRef.current.scale.setScalar(1.6 * f)
   })
 
   return (
-    <sprite ref={spriteRef} position={[1.8, 7.58, 3]}>
+    <sprite ref={spriteRef} position={[0.4, 7.55, -8.7]}>
       <spriteMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
     </sprite>
   )
@@ -140,11 +158,14 @@ function TorchLight() {
       + Math.sin(t * 9.1) * 0.12
       + Math.sin(t * 23.7) * 0.06
       + Math.sin(t * 4.3) * 0.08
-    if (lightRef.current) lightRef.current.intensity = 10.0 * flicker
+    if (lightRef.current) lightRef.current.intensity = 20.0 * flicker
   })
-  const torchPos = [1.8, 7.48, 3]
+  const torchPos = [0.4, 7.15, -8.7]
   return (
-    <pointLight ref={lightRef} position={torchPos} color="#ff7700" intensity={10} distance={35} decay={1.2} castShadow={false} />
+    <>
+      <pointLight ref={lightRef} position={torchPos} color="#ff7700" intensity={20} distance={35} decay={1.2} castShadow={false} />
+      <pointLight position={torchPos} color="#ffcc44" intensity={10} distance={6} decay={2} castShadow={false} />
+    </>
   )
 }
 
@@ -316,11 +337,18 @@ function App() {
   const [chestOpen, setChestOpen] = useState(false)
   const [started, setStarted] = useState(false)
   const [activeWorld, setActiveWorld] = useState('bed')
+  const [wallModal, setWallModal] = useState(false)
+  const [transitioning, setTransitioning] = useState(false)
   const chestRef = useRef()
   const controlsRef = useRef()
+  const transitionTimer = useRef()
 
   function handleSelectWorld(world) {
     setActiveWorld(world)
+    setWallModal(false)
+    setTransitioning(true)
+    clearTimeout(transitionTimer.current)
+    transitionTimer.current = setTimeout(() => setTransitioning(false), 1800)
     handleClose()
   }
 
@@ -334,7 +362,7 @@ function App() {
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Canvas
-        shadows
+        shadows={{ type: THREE.PCFShadowMap }}
         camera={{ position: [0, 10, 7], fov: 70 }}
         dpr={Math.min(window.devicePixelRatio, 1.5)}
         gl={{
@@ -352,33 +380,74 @@ function App() {
         <Suspense fallback={null}>
           {/* Все миры всегда в сцене — скрываем неактивные через visible чтобы не пересоздавать */}
           <group visible={activeWorld === 'bed'}>
-            <Bed scale={46} position={[-45, -6.79, -10.5]} />
+            <Bed scale={46} position={[-37.37, -6.89, -6.65]} />
           </group>
           <group visible={activeWorld === 'default'}>
-            <World scale={50} position={[0, 0, 0]} />
+            <World scale={50} position={[-16, 0, 0]} />
+            {[-1.75 + 3.4 - 4.75, -1.75 + 3.4 - 1.7 - 4.75, -1.75 + 3.4 - 3.4 - 4.75].map((x, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.3]} onClick={activeWorld === 'default' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'desert'}>
-            <Desert scale={1.9} position={[69.8, -54.3, -12.4]} rotation={[0, 0, 0]} />
+            <Desert scale={1.9} position={[70.8, -54.3, -22.6]} rotation={[0, 0, 0]} />
+            {[-1.75 + 3.4 - 8.2, -1.75 + 3.4 - 1.7 - 8.2, -1.75 + 3.4 - 3.4 - 8.2].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'desert' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'snow'}>
-            <Snow scale={1.9} position={[96.03, -166.6, 0.9]} />
-            <Torch scale={0.13} position={[1.8, 6.4, 3]} />
+            <Snow scale={1.9} position={[96.03, -166.6, -7.6]} />
+            <Torch scale={0.13} position={[0.4, 6.4, -8.7]} />
+            {[-1.75 + 3.4 - 8.4, -1.75 + 3.4 - 10.1, -1.75 + 3.4 - 11.8].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-0.2, y, z]} onClick={activeWorld === 'snow' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'jungle'}>
-            <Jungle scale={116} position={[95.8, -80.45, -71.8]} />
+            <Jungle scale={116} position={[91.1, -80.45, -70.2]} />
+            {[-6.55 + 3.4, -6.55 + 3.4 - 1.7, -6.55 + 3.4 - 3.4].map((x, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.2]} onClick={activeWorld === 'jungle' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'ocean'}>
-            <Ocean scale={1.8} position={[-44.1, -43.9, 2.7]} />
+            <Ocean scale={1.8} position={[-44.1, -43.9, 8.1]} />
+            {[0.1 + 3.4, 0.1 + 3.4 - 1.7, 0.1 + 3.4 - 3.4].map((z, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'ocean' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'mushroom'}>
-            <Mushroom scale={40} position={[-49.2, -41.75, 14.1]} />
+            <Mushroom scale={40} position={[-49.2, -41.75, 15.76]} />
+            {[0.1 + 3.4, 0.1 + 3.4 - 1.7, 0.1 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'mushroom' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'nether'}>
-            <Nether scale={155} position={[54.17, 3.29, 44.25]} />
+            <Nether scale={155} position={[54.17, 3.29, 44.32]} />
+            {[-9.9 + 3.4, -9.9 + 3.4 - 1.7, -9.9 + 3.4 - 3.4].map((z, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'nether' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'end'}>
-            <End scale={160} position={[98.15, -43, 67]} />
+            <End scale={160} position={[98.15, -43, 60]} />
+            {[-10.4 + 3.4, -10.4 + 3.4 - 1.7, -10.4 + 3.4 - 3.4].map((z, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'end' ? () => setWallModal(true) : undefined} />
+              ))
+            )}
           </group>
+
           {activeWorld === 'snow' && (
             <>
               <TorchLight />
@@ -389,12 +458,13 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? Math.PI / 2 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
-          {!chestOpen && started && (
-            <Html position={[0, 9.5, 0]} center>
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? 0 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          {/* label */}
+          {!chestOpen && started && !wallModal && (
+            <Html position={[0, 9.5, 0]} center transform sprite style={{ pointerEvents: 'none' }}>
               <div style={{
                 fontFamily: "'Press Start 2P', monospace",
-                fontSize: '14px',
+                fontSize: '16px',
                 color: '#fff',
                 textShadow: '2px 2px 0 #000',
                 textAlign: 'center',
@@ -402,7 +472,26 @@ function App() {
                 pointerEvents: 'none',
                 userSelect: 'none',
               }}>
-                Лабы здесь<br />↓
+                <span className="mc-label-pulse">Лабы здесь</span><br /><span className="arrow-bounce">↓</span>
+              </div>
+            </Html>
+          )}
+          {activeWorld === 'bed' && !chestOpen && started && (
+            <Html position={[5, 14, 3.7]} center distanceFactor={14} style={{ pointerEvents: 'none' }}>
+              <div className="mc-welcome-intro" style={{
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: 'clamp(13px, 1.2vw, 11px)',
+                color: '#fff',
+                textShadow: '2px 2px 0 #000',
+                textAlign: 'center',
+                lineHeight: '1.8',
+                width: '90vw',
+                maxWidth: '520px',
+                whiteSpace: 'normal',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }}>
+                Привет, это мой проект для просмотра лабораторных работ по вебу, загляни в сундук снизу, там все есть.
               </div>
             </Html>
           )}
@@ -412,6 +501,66 @@ function App() {
       </Canvas>
 
       <ChestInventory open={chestOpen} onClose={handleClose} onSelectWorld={handleSelectWorld} activeWorld={activeWorld} />
+
+      {wallModal && activeWorld !== 'bed' && (
+        <div onClick={() => setWallModal(false)} style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(80vw, 580px)',
+            height: 'min(80vh, 580px)',
+            position: 'relative',
+            imageRendering: 'pixelated',
+            background: `
+              repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(180,170,160,0.15) 15px, rgba(180,170,160,0.15) 16px),
+              repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(180,170,160,0.15) 15px, rgba(180,170,160,0.15) 16px),
+              linear-gradient(135deg, #f0ece4 0%, #e8e2d8 30%, #f2ede6 50%, #ddd8ce 70%, #ede8e0 100%)
+            `,
+            border: '4px solid',
+            borderColor: '#fff #aaa #aaa #fff',
+            boxShadow: '4px 4px 0 #555, inset 1px 1px 0 rgba(255,255,255,0.8)',
+            padding: '20px',
+            overflowY: 'auto',
+          }}>
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+              {/* Сетка 3×3 — имитация кварцевых блоков */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gridTemplateRows: 'repeat(3, 1fr)',
+                gap: '4px',
+                padding: '4px',
+              }}>
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div key={i} style={{
+                    background: `linear-gradient(135deg, #f4f0e8 0%, #e8e2d6 40%, #f0ebe2 60%, #ddd6ca 100%)`,
+                    border: '2px solid',
+                    borderColor: 'rgba(255,255,255,0.7) rgba(160,150,140,0.5) rgba(160,150,140,0.5) rgba(255,255,255,0.7)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}>
+                    {/* прожилки внутри каждого блока */}
+                    <div style={{ position: 'absolute', top: '30%', left: '10%', width: '40%', height: '1px', background: 'rgba(120,110,100,0.3)', transform: 'rotate(-10deg)' }} />
+                    <div style={{ position: 'absolute', top: '60%', left: '30%', width: '30%', height: '1px', background: 'rgba(120,110,100,0.25)', transform: 'rotate(5deg)' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button onClick={() => setWallModal(false)} style={{
+              position: 'absolute', top: '10px', right: '10px',
+              background: '#d8d0c4', border: '2px solid', borderColor: '#fff #888 #888 #fff',
+              width: '24px', height: '24px', cursor: 'pointer',
+              fontFamily: "'Press Start 2P', monospace", fontSize: '10px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#333', boxShadow: '2px 2px 0 #555',
+            }}>✕</button>
+          </div>
+        </div>
+      )}
       {activeWorld === 'bed' && (
         <div style={{
           position: 'absolute', inset: 0,
@@ -506,7 +655,7 @@ function App() {
           }} />
         </>
       )}
-      <MusicPlayer autoPlay={started} />
+      {started && <MusicPlayer autoPlay={started} />}
       {!started && <StartScreen onStart={() => setStarted(true)} />}
     </div>
   )

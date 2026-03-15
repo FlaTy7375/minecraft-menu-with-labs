@@ -102,3 +102,39 @@
   color: #c060ff;
   line-height: 1.4;
 }
+
+@media (max-width: 600px) {
+  .inventory-window {
+    width: 90%;
+    padding: 10px 8px;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 2px;
+  }
+
+  .inventory-slot {
+    aspect-ratio: 1 / 1;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .inventory-section-title {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .mc-tooltip {
+    white-space: normal;
+    max-width: 160px;
+  }
+
+  .mc-tooltip-title {
+    font-size: 9px;
+  }
+
+  .mc-tooltip-desc {
+    font-size: 7px;
+  }
+}

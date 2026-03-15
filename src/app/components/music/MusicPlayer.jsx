@@ -22,19 +22,19 @@ export function MusicPlayer({ autoPlay = false }) {
   }
 
   // Запуск когда пользователь нажал Start
-//   useEffect(() => {
-//     if (autoPlay) {
-//       audio.current.play().then(() => setPlaying(true)).catch(() => {})
-//     }
-//   }, [autoPlay])
+  useEffect(() => {
+    if (autoPlay) {
+      audio.current.play().then(() => setPlaying(true)).catch(() => {})
+    }
+  }, [autoPlay])
 
   // Смена трека
   useEffect(() => {
     const a = audio.current
-    const wasPlaying = !a.paused
+    const wasPlaying = playing
     a.src = TRACKS[current].src
     a.load()
-    if (wasPlaying) a.play()
+    if (wasPlaying) a.play().then(() => setPlaying(true)).catch(() => {})
 
     const onMeta = () => setDuration(a.duration)
     const onEnd = () => setCurrent(i => (i + 1) % TRACKS.length)
@@ -44,7 +44,7 @@ export function MusicPlayer({ autoPlay = false }) {
       a.removeEventListener('loadedmetadata', onMeta)
       a.removeEventListener('ended', onEnd)
     }
-  }, [current])
+  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Прогресс — обновляем раз в секунду через interval
   useEffect(() => {
