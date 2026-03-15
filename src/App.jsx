@@ -44,7 +44,7 @@ const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 // Позиция камеры: в пустыне сундук повёрнут -90° по Y, значит "спереди" — со стороны +X
 const CAM_DEFAULT = new THREE.Vector3(-4.90, 14.68, 18.40)
 const CAM_BED     = new THREE.Vector3(13.32, 10.81, 3.75)
-const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
+const CAM_DESERT  = new THREE.Vector3(-15.77, 13.68, -4.31)
 const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
 const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
 const CAM_OCEAN    = new THREE.Vector3(7, 10, 0)
@@ -58,6 +58,18 @@ function CameraController({ activeWorld, controlsRef }) {
   const targetPos = useRef(new THREE.Vector3(...CAM_DEFAULT))
   const prevWorld = useRef(null)
 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'l' || e.key === 'L') {
+        const p = camera.position
+        const t = controlsRef.current?.target
+        console.log(`cam: [${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}] target: [${t?.x.toFixed(2)}, ${t?.y.toFixed(2)}, ${t?.z.toFixed(2)}]`)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [camera, controlsRef])
+
   const camForWorld = (w) => {
     if (w === 'bed')    return CAM_BED
     if (w === 'desert') return CAM_DESERT
@@ -70,7 +82,7 @@ function CameraController({ activeWorld, controlsRef }) {
     return CAM_DEFAULT
   }
 
-  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : w === 'default' ? [-4.90, 7.79, -0.15] : [0, 7.4, 0]
+  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : w === 'default' ? [-4.90, 7.79, -0.15] : w === 'desert' ? [0.15, 7.81, -4.15] : [0, 7.4, 0]
 
   useFrame(() => {
     if (prevWorld.current !== activeWorld) {
@@ -97,6 +109,7 @@ function CameraController({ activeWorld, controlsRef }) {
         controlsRef.current.enabled = true
       }
     }
+
   })
 
   return null
@@ -369,11 +382,11 @@ function App() {
             )}
           </group>
           <group visible={activeWorld === 'desert'}>
-            <Desert scale={1.9} position={[69.8, -54.3, -12.4]} rotation={[0, 0, 0]} />
+            <Desert scale={1.9} position={[70.8, -54.3, -22.6]} rotation={[0, 0, 0]} />
             {/* стена позади сундука — камера с -X, стена на +X, ряды по Z */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+            {[-1.75 + 3.4 - 8.2, -1.75 + 3.4 - 1.7 - 8.2, -1.75 + 3.4 - 3.4 - 8.2].map((z, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
               ))
             )}
           </group>
