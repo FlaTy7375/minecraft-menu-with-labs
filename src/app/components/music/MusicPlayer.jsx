@@ -22,11 +22,11 @@ export function MusicPlayer({ autoPlay = false }) {
   }
 
   // Запуск когда пользователь нажал Start
-//   useEffect(() => {
-//     if (autoPlay) {
-//       audio.current.play().then(() => setPlaying(true)).catch(() => {})
-//     }
-//   }, [autoPlay])
+  useEffect(() => {
+    if (autoPlay) {
+      audio.current.play().then(() => setPlaying(true)).catch(() => {})
+    }
+  }, [autoPlay])
 
   // Смена трека
   useEffect(() => {

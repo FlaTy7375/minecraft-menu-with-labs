@@ -42,7 +42,7 @@ const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 
 // Позиция камеры: в пустыне сундук повёрнут -90° по Y, значит "спереди" — со стороны +X
 const CAM_DEFAULT = new THREE.Vector3(0, 10, 7)
-const CAM_BED     = new THREE.Vector3(7, 10, 0)
+const CAM_BED     = new THREE.Vector3(13.32, 10.81, 3.75)
 const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
 const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
 const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
@@ -68,6 +68,9 @@ function CameraController({ activeWorld, controlsRef }) {
     if (w === 'end')      return CAM_END
     return CAM_DEFAULT
   }
+
+  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : [0, 7.4, 0]
+
   useFrame(() => {
     if (prevWorld.current !== activeWorld) {
       prevWorld.current = activeWorld
@@ -78,16 +81,17 @@ function CameraController({ activeWorld, controlsRef }) {
 
     if (!animating.current) return
 
+    const [tx, ty, tz] = targetForWorld(activeWorld)
     camera.position.lerp(targetPos.current, 0.15)
     if (controlsRef.current) {
-      controlsRef.current.target.set(0, 7.4, 0)
+      controlsRef.current.target.set(tx, ty, tz)
       controlsRef.current.update()
     }
     if (camera.position.distanceTo(targetPos.current) < 0.01) {
       camera.position.copy(targetPos.current)
       animating.current = false
       if (controlsRef.current) {
-        controlsRef.current.target.set(0, 7.4, 0)
+        controlsRef.current.target.set(tx, ty, tz)
         controlsRef.current.update()
         controlsRef.current.enabled = true
       }
@@ -334,7 +338,7 @@ function App() {
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Canvas
-        shadows
+        shadows={{ type: THREE.PCFShadowMap }}
         camera={{ position: [0, 10, 7], fov: 70 }}
         dpr={Math.min(window.devicePixelRatio, 1.5)}
         gl={{
@@ -352,7 +356,7 @@ function App() {
         <Suspense fallback={null}>
           {/* Все миры всегда в сцене — скрываем неактивные через visible чтобы не пересоздавать */}
           <group visible={activeWorld === 'bed'}>
-            <Bed scale={46} position={[-45, -6.79, -10.5]} />
+            <Bed scale={46} position={[-37.37, -6.89, -6.65]} />
           </group>
           <group visible={activeWorld === 'default'}>
             <World scale={50} position={[0, 0, 0]} />
@@ -389,9 +393,10 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? Math.PI / 2 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? 0 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          {/* label moved to DOM overlay */}
           {!chestOpen && started && (
-            <Html position={[0, 9.5, 0]} center>
+            <Html position={[0, 9.5, 0]} center distanceFactor={12}>
               <div style={{
                 fontFamily: "'Press Start 2P', monospace",
                 fontSize: '14px',
@@ -403,6 +408,25 @@ function App() {
                 userSelect: 'none',
               }}>
                 Лабы здесь<br />↓
+              </div>
+            </Html>
+          )}
+          {activeWorld === 'bed' && !chestOpen && started && (
+            <Html position={[5, 14, 3.7]} center distanceFactor={14}>
+              <div style={{
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: 'clamp(8px, 1.2vw, 11px)',
+                color: '#fff',
+                textShadow: '2px 2px 0 #000',
+                textAlign: 'center',
+                lineHeight: '1.8',
+                width: '80vw',
+                maxWidth: '520px',
+                whiteSpace: 'normal',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }}>
+                Привет, это мой проект для просмотра лабораторных работ по вебу, загляни в сундук снизу, там все есть.
               </div>
             </Html>
           )}
