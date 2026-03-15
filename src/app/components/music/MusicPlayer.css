@@ -2,7 +2,7 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  z-index: 20;
+  z-index: 1001;
   background: #c6c6c6;
   border: 3px solid;
   border-color: #fff #555 #555 #fff;

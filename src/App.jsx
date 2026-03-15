@@ -337,11 +337,13 @@ function App() {
   const [chestOpen, setChestOpen] = useState(false)
   const [started, setStarted] = useState(false)
   const [activeWorld, setActiveWorld] = useState('bed')
+  const [wallModal, setWallModal] = useState(false)
   const chestRef = useRef()
   const controlsRef = useRef()
 
   function handleSelectWorld(world) {
     setActiveWorld(world)
+    setWallModal(false)
     handleClose()
   }
 
@@ -377,74 +379,66 @@ function App() {
           </group>
           <group visible={activeWorld === 'default'}>
             <World scale={50} position={[-16, 0, 0]} />
-            {/* Кварцевая стена: 3 колонки × 3 ряда */}
             {[-1.75 + 3.4 - 4.75, -1.75 + 3.4 - 1.7 - 4.75, -1.75 + 3.4 - 3.4 - 4.75].map((x, col) =>
               [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.3]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.3]} onClick={activeWorld === 'default' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'desert'}>
             <Desert scale={1.9} position={[70.8, -54.3, -22.6]} rotation={[0, 0, 0]} />
-            {/* стена позади сундука — камера с -X, стена на +X, ряды по Z */}
             {[-1.75 + 3.4 - 8.2, -1.75 + 3.4 - 1.7 - 8.2, -1.75 + 3.4 - 3.4 - 8.2].map((z, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'desert' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'snow'}>
             <Snow scale={1.9} position={[96.03, -166.6, -7.6]} />
             <Torch scale={0.13} position={[0.4, 6.4, -8.7]} />
-            {/* камера с -X → стена на +X */}
             {[-1.75 + 3.4 - 8.4, -1.75 + 3.4 - 10.1, -1.75 + 3.4 - 11.8].map((z, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-0.2, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-0.2, y, z]} onClick={activeWorld === 'snow' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'jungle'}>
             <Jungle scale={116} position={[91.1, -80.45, -70.2]} />
-            {/* камера с +Z → стена на -Z */}
             {[-6.55 + 3.4, -6.55 + 3.4 - 1.7, -6.55 + 3.4 - 3.4].map((x, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.2]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.2]} onClick={activeWorld === 'jungle' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'ocean'}>
             <Ocean scale={1.8} position={[-44.1, -43.9, 8.1]} />
-            {/* камера с +X → стена на -X */}
             {[0.1 + 3.4, 0.1 + 3.4 - 1.7, 0.1 + 3.4 - 3.4].map((z, col) =>
               [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'ocean' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'mushroom'}>
             <Mushroom scale={40} position={[-49.2, -41.75, 15.76]} />
-            {/* камера с +X → стена на -X */}
             {[0.1 + 3.4, 0.1 + 3.4 - 1.7, 0.1 + 3.4 - 3.4].map((z, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'mushroom' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'nether'}>
             <Nether scale={155} position={[54.17, 3.29, 44.32]} />
-            {/* камера с -X → стена на +X */}
             {[-9.9 + 3.4, -9.9 + 3.4 - 1.7, -9.9 + 3.4 - 3.4].map((z, col) =>
               [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'nether' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'end'}>
             <End scale={160} position={[98.15, -43, 60]} />
-            {/* камера с -X → стена на +X */}
             {[-10.4 + 3.4, -10.4 + 3.4 - 1.7, -10.4 + 3.4 - 3.4].map((z, col) =>
               [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} onClick={activeWorld === 'end' ? () => setWallModal(true) : undefined} />
               ))
             )}
           </group>
@@ -460,8 +454,8 @@ function App() {
           )}
           <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? 0 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
           {/* label moved to DOM overlay */}
-          {!chestOpen && started && (
-            <Html position={[0, 9.5, 0]} center distanceFactor={12}>
+          {!chestOpen && started && !wallModal && (
+            <Html position={[0, 9.5, 0]} center distanceFactor={12} style={{ pointerEvents: 'none' }}>
               <div style={{
                 fontFamily: "'Press Start 2P', monospace",
                 fontSize: '20px',
@@ -477,7 +471,7 @@ function App() {
             </Html>
           )}
           {activeWorld === 'bed' && !chestOpen && started && (
-            <Html position={[5, 14, 3.7]} center distanceFactor={14}>
+            <Html position={[5, 14, 3.7]} center distanceFactor={14} style={{ pointerEvents: 'none' }}>
               <div className="mc-welcome-intro" style={{
                 fontFamily: "'Press Start 2P', monospace",
                 fontSize: 'clamp(13px, 1.2vw, 11px)',
@@ -501,6 +495,66 @@ function App() {
       </Canvas>
 
       <ChestInventory open={chestOpen} onClose={handleClose} onSelectWorld={handleSelectWorld} activeWorld={activeWorld} />
+
+      {wallModal && activeWorld !== 'bed' && (
+        <div onClick={() => setWallModal(false)} style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(80vw, 580px)',
+            height: 'min(80vh, 580px)',
+            position: 'relative',
+            imageRendering: 'pixelated',
+            background: `
+              repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(180,170,160,0.15) 15px, rgba(180,170,160,0.15) 16px),
+              repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(180,170,160,0.15) 15px, rgba(180,170,160,0.15) 16px),
+              linear-gradient(135deg, #f0ece4 0%, #e8e2d8 30%, #f2ede6 50%, #ddd8ce 70%, #ede8e0 100%)
+            `,
+            border: '4px solid',
+            borderColor: '#fff #aaa #aaa #fff',
+            boxShadow: '4px 4px 0 #555, inset 1px 1px 0 rgba(255,255,255,0.8)',
+            padding: '20px',
+            overflowY: 'auto',
+          }}>
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+              {/* Сетка 3×3 — имитация кварцевых блоков */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gridTemplateRows: 'repeat(3, 1fr)',
+                gap: '4px',
+                padding: '4px',
+              }}>
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div key={i} style={{
+                    background: `linear-gradient(135deg, #f4f0e8 0%, #e8e2d6 40%, #f0ebe2 60%, #ddd6ca 100%)`,
+                    border: '2px solid',
+                    borderColor: 'rgba(255,255,255,0.7) rgba(160,150,140,0.5) rgba(160,150,140,0.5) rgba(255,255,255,0.7)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}>
+                    {/* прожилки внутри каждого блока */}
+                    <div style={{ position: 'absolute', top: '30%', left: '10%', width: '40%', height: '1px', background: 'rgba(120,110,100,0.3)', transform: 'rotate(-10deg)' }} />
+                    <div style={{ position: 'absolute', top: '60%', left: '30%', width: '30%', height: '1px', background: 'rgba(120,110,100,0.25)', transform: 'rotate(5deg)' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button onClick={() => setWallModal(false)} style={{
+              position: 'absolute', top: '10px', right: '10px',
+              background: '#d8d0c4', border: '2px solid', borderColor: '#fff #888 #888 #fff',
+              width: '24px', height: '24px', cursor: 'pointer',
+              fontFamily: "'Press Start 2P', monospace", fontSize: '10px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#333', boxShadow: '2px 2px 0 #555',
+            }}>✕</button>
+          </div>
+        </div>
+      )}
       {activeWorld === 'bed' && (
         <div style={{
           position: 'absolute', inset: 0,
