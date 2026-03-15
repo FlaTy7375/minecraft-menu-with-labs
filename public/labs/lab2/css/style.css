@@ -1,0 +1,211 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: transparent;
+    min-height: 100vh;
+    padding: 30px 16px;
+    font-family: 'Lato', sans-serif;
+}
+
+/* ===== ARTICLE ===== */
+.article {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 1200px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+/* ===== ПРЯМОЙ ДОЧЕРНИЙ СЕЛЕКТОР > ===== */
+/* Параграфы — прямые дочерние элементы .article */
+.article > .paragraph {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #c9d1e0;
+    padding: 18px 36px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    letter-spacing: 0.02em;
+}
+
+/* ===== ПСЕВДОКЛАСС :first-child ===== */
+.article > .paragraph:first-child {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: #e8d5b7;
+    padding-top: 32px;
+    border-top: 4px solid #c9a84c;
+}
+
+/* ===== ПСЕВДОКЛАСС :last-child (последний параграф перед контейнером) ===== */
+.article > .paragraph:last-of-type {
+    border-bottom: none;
+}
+
+/* ===== ПСЕВДОКЛАСС :nth-child ===== */
+.article > .paragraph:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.article > .paragraph:nth-child(even) {
+    background: rgba(201, 168, 76, 0.04);
+}
+
+/* ===== ARTICLE-CONTAINER ===== */
+.article-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 36px 32px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* ===== ПОТОМОК .article .article-img ===== */
+.article .article-img {
+    width: 100%;
+    max-width: 500px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid rgba(201, 168, 76, 0.3);
+    display: block;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: width 1s ease-in-out, max-width 1s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease, outline-color 0.5s ease;
+}
+
+/* ===== ПСЕВДОКЛАСС :hover ===== */
+.article .article-img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 32px rgba(201, 168, 76, 0.25);
+    border-color: #c9a84c;
+}
+
+/* ===== СОСЕДНИЙ СЕЛЕКТОР + ===== */
+/* Параграф сразу после картинки */
+.article-img + .paragraph {
+    font-family: 'Merriweather', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 14px;
+    color: #a0aec0;
+    text-align: center;
+    padding: 0 20px;
+    border-bottom: none;
+    background: none;
+}
+
+/* ===== СЕСТРИНСКИЙ СЕЛЕКТОР ~ ===== */
+/* Все параграфы после первой картинки внутри контейнера */
+.article-img ~ .paragraph {
+    font-family: 'Merriweather', serif;
+    font-size: 14px;
+    color: #b0bec5;
+    line-height: 1.9;
+    text-align: center;
+    padding: 0 24px;
+    border-bottom: none;
+    background: none;
+}
+
+/* ===== ПАРАГРАФЫ ВНУТРИ КОНТЕЙНЕРА (потомок) ===== */
+.article-container .paragraph {
+    font-family: 'Merriweather', serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: #b0bec5;
+    line-height: 1.9;
+    text-align: center;
+    padding: 0 24px;
+}
+
+/* ===== ПСЕВДОКЛАСС :not() ===== */
+.article-container .paragraph:not(:last-of-type) {
+    padding-bottom: 8px;
+}
+
+/* ===== КНОПКИ ===== */
+.buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.container-button {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    width: 180px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(201, 168, 76, 0.5);
+    border-radius: 6px;
+    color: #c9a84c;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.container-button:hover {
+    background: rgba(201, 168, 76, 0.15);
+    border-color: #c9a84c;
+    color: #f0d080;
+}
+
+/* ===== СОСЕДНИЙ + для кнопок ===== */
+.container-button.first + .container-button.second {
+    border-color: rgba(120, 180, 255, 0.5);
+    color: #78b4ff;
+}
+
+.container-button.first + .container-button.second:hover {
+    background: rgba(120, 180, 255, 0.12);
+    border-color: #78b4ff;
+    color: #aad4ff;
+}
+
+/* ===== JS КЛАССЫ ===== */
+.paragraph-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.paragraph-styled {
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+    font-size: 17px !important;
+    color: #c9a84c !important;
+    pointer-events: none;
+    transition: color 0.5s ease-in-out, font-size 0.5s ease-in-out;
+}
+
+.img-bigger {
+    width: calc(100% + 30%) !important;
+    max-width: 700px !important;
+}
+
+.border {
+    outline: 2px solid rgba(201, 168, 76, 0.6) !important;
+    border-radius: 10px;
+    transition: outline-color 0.5s ease;
+}

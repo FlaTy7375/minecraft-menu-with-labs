@@ -182,9 +182,9 @@ function EndCrystalLight() {
   )
 }
 
-function WallLabel({ position, rotation, onClick }) {
+function WallLabel({ position, rotation, onClick, imageSrc = '/images/lab1.png' }) {
   const texture = useMemo(() => {
-    const tex = new THREE.TextureLoader().load('/images/lab1.png', (t) => {
+    const tex = new THREE.TextureLoader().load(imageSrc, (t) => {
       // убираем белый фон через canvas
       const img = t.image
       const canvas = document.createElement('canvas')
@@ -207,7 +207,7 @@ function WallLabel({ position, rotation, onClick }) {
     })
     tex.colorSpace = THREE.SRGBColorSpace
     return tex
-  }, [])
+  }, [imageSrc])
 
   return (
     <group position={position} rotation={rotation}>
@@ -520,7 +520,7 @@ function App() {
           {activeWorld !== 'bed' && (() => {
             const wallConfigs = {
               default:  { pos: [-4.8,  9.2, 0.97], rot: [0, 0, 0] },
-              desert:   { pos: [-0.86,   9.2, -4.8], rot: [0,  -Math.PI / 2, 0] },
+              desert:   { pos: [-0.86,   9.2, -4.85], rot: [0,  -Math.PI / 2, 0] },
               snow:     { pos: [-1.06,  9.2, -5], rot: [0,  -Math.PI / 2, 0] },
               jungle:   { pos: [-4.85, 9.2, 1.1], rot: [0, 0, 0] },
               ocean:    { pos: [0.9,  9.2,  5.15], rot: [0, Math.PI / 2, 0] },
@@ -530,8 +530,9 @@ function App() {
             }
             const cfg = wallConfigs[activeWorld]
             if (!cfg) return null
+            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : '/images/lab1.png'
             return (
-              <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} />
+              <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} imageSrc={labImage} />
             )
           })()}
           {/* label */}
@@ -587,8 +588,8 @@ function App() {
           zIndex: 1000,
         }}>
           <div onClick={(e) => e.stopPropagation()} style={{
-            width: 'min(80vw, 580px)',
-            height: isMobile ? 'min(53vh, 387px)' : 'min(80vh, 580px)',
+            width: isMobile ? '95vw' : '80vw',
+            height: isMobile ? '53vh' : '80vh',
             position: 'relative',
             imageRendering: 'pixelated',
             background: `
@@ -637,7 +638,7 @@ function App() {
               zIndex: 10,
             }}>✕</button>
             <iframe
-              src="/labs/lab1/index.html"
+              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : '/labs/lab1/index.html'}
               style={{
                 position: 'relative',
                 zIndex: 5,
@@ -646,7 +647,7 @@ function App() {
                 border: 'none',
                 background: 'transparent',
               }}
-              title="Лабораторная работа №1"
+              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : 'Лабораторная работа №1'}
             />
           </div>
         </div>
