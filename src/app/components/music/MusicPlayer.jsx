@@ -8,25 +8,40 @@ const TRACKS = [
   { name: 'Key',             src: '/sounds/Key.mp3' },
 ]
 
-export function MusicPlayer({ autoPlay = false }) {
+export function MusicPlayer({ autoPlay = false, audioRef: externalRef }) {
   const [current, setCurrent] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
-  const audio = useRef(null)
+  const internalRef = useRef(null)
+  const audio = externalRef || internalRef
 
   // Создаём audio один раз
   if (!audio.current) {
     audio.current = new Audio(TRACKS[0].src)
   }
 
-  // Запуск когда пользователь нажал Start
+  // Запуск когда пользователь нажал Start (fallback если нет externalRef)
   useEffect(() => {
-    if (autoPlay) {
+    if (autoPlay && !externalRef) {
       audio.current.play().then(() => setPlaying(true)).catch(() => {})
     }
-  }, [autoPlay])
+  }, [autoPlay]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Синхронизация playing state с реальным состоянием audio
+  useEffect(() => {
+    const a = audio.current
+    if (!a) return
+    const onPlay = () => setPlaying(true)
+    const onPause = () => setPlaying(false)
+    a.addEventListener('play', onPlay)
+    a.addEventListener('pause', onPause)
+    return () => {
+      a.removeEventListener('play', onPlay)
+      a.removeEventListener('pause', onPause)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Смена трека
   useEffect(() => {

@@ -342,6 +342,7 @@ function App() {
   const chestRef = useRef()
   const controlsRef = useRef()
   const transitionTimer = useRef()
+  const audioRef = useRef(null)
 
   function handleSelectWorld(world) {
     setActiveWorld(world)
@@ -655,8 +656,13 @@ function App() {
           }} />
         </>
       )}
-      {started && <MusicPlayer autoPlay={started} />}
-      {!started && <StartScreen onStart={() => setStarted(true)} />}
+      {started && <MusicPlayer autoPlay={started} audioRef={audioRef} />}
+      {!started && <StartScreen onStart={() => {
+        // Запускаем аудио прямо в обработчике клика — браузер разрешит autoplay
+        if (!audioRef.current) audioRef.current = new Audio('/sounds/Subwoofer-Lullaby.mp3')
+        audioRef.current.play().catch(() => {})
+        setStarted(true)
+      }} />}
     </div>
   )
 }
