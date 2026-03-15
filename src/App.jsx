@@ -7,13 +7,21 @@ import { Model as Desert } from './app/models/Minecraft_dessert'
 import { Model as Snow } from './app/models/Minecraft_snow'
 import { Model as Torch } from './app/models/Minecraft_torch'
 import { Model as Jungle } from './app/models/Minecraft_jungle'
+import { Model as Ocean } from './app/models/Minecraft_ocean'
+import { Model as Mushroom } from './app/models/Minecraft_mushroom'
 import { Model as Chest } from './app/models/Minecraft-chest'
 import { CloudSky } from './app/textures/CloudSky'
 import { DesertSky } from './app/textures/DesertSky'
 import { SnowSky } from './app/textures/SnowSky'
 import { JungleSky } from './app/textures/JungleSky'
+import { OceanSky } from './app/textures/OceanSky'
+import { MushroomSky } from './app/textures/MushroomSky'
 import { Snowfall } from './app/components/Snowfall'
 import { Rainfall } from './app/components/Rainfall'
+import { Bubbles } from './app/components/Bubbles'
+import { Fireflies } from './app/components/Fireflies'
+import { OceanAmbient } from './app/components/OceanAmbient'
+import { WindAmbient } from './app/components/WindAmbient'
 import { Thunder } from './app/components/Thunder'
 import { ChestInventory } from './app/components/ChestInventory/ChestInventory'
 import { MusicPlayer } from './app/components/music/MusicPlayer'
@@ -28,6 +36,8 @@ const CAM_DEFAULT = new THREE.Vector3(0, 10, 7)
 const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
 const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
 const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
+const CAM_OCEAN    = new THREE.Vector3(7, 10, 0)
+const CAM_MUSHROOM = new THREE.Vector3(7, 10, 0)
 
 function CameraController({ activeWorld, controlsRef }) {
   const { camera } = useThree()
@@ -39,6 +49,8 @@ function CameraController({ activeWorld, controlsRef }) {
     if (w === 'desert') return CAM_DESERT
     if (w === 'snow')   return CAM_SNOW
     if (w === 'jungle') return CAM_JUNGLE
+    if (w === 'ocean')    return CAM_OCEAN
+    if (w === 'mushroom') return CAM_MUSHROOM
     return CAM_DEFAULT
   }
   useFrame(() => {
@@ -127,25 +139,29 @@ function ToneMappingUpdater({ activeWorld }) {
     if (activeWorld === 'desert') gl.toneMappingExposure = 1.0
     else if (activeWorld === 'snow') gl.toneMappingExposure = 1.3
     else if (activeWorld === 'jungle') gl.toneMappingExposure = 0.5
+    else if (activeWorld === 'ocean') gl.toneMappingExposure = 1.1
+    else if (activeWorld === 'mushroom') gl.toneMappingExposure = 0.85
     else gl.toneMappingExposure = 2.2
   }, [activeWorld, gl])
   return null
 }
 
 function SceneLighting({ activeWorld }) {
-  const isDesert = activeWorld === 'desert'
-  const isSnow   = activeWorld === 'snow'
-  const isJungle = activeWorld === 'jungle'
-  const sunPos   = isDesert ? DESERT_SUN : isSnow ? MOON_POS : SUNSET_SUN
+  const isDesert   = activeWorld === 'desert'
+  const isSnow     = activeWorld === 'snow'
+  const isJungle   = activeWorld === 'jungle'
+  const isOcean    = activeWorld === 'ocean'
+  const isMushroom = activeWorld === 'mushroom'
+  const sunPos     = isDesert ? DESERT_SUN : isSnow ? MOON_POS : isOcean ? new THREE.Vector3(80, 30, 0) : isMushroom ? new THREE.Vector3(60, 8, 40) : SUNSET_SUN
 
   return (
     <>
-      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : <CloudSky />}
+      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : isOcean ? <OceanSky /> : isMushroom ? <MushroomSky /> : <CloudSky />}
 
       <directionalLight
         position={sunPos}
-        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : 8}
-        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : '#ff7000'}
+        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : isOcean ? 4 : isMushroom ? 1.8 : 8}
+        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : isOcean ? '#88bbff' : isMushroom ? '#ffaacc' : '#ff7000'}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-near={0.1}
@@ -166,10 +182,14 @@ function SceneLighting({ activeWorld }) {
             </>
           : isJungle
             ? <hemisphereLight args={['#606060', '#303030', 0.6]} />
-            : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
+            : isOcean
+              ? <hemisphereLight args={['#004466', '#001122', 1.5]} />
+              : isMushroom
+                ? <hemisphereLight args={['#ddaacc', '#3a1a2a', 1.2]} />
+                : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
       }
 
-      {!isDesert && !isSnow && !isJungle && <SunFlare />}
+      {!isDesert && !isSnow && !isJungle && !isOcean && !isMushroom && <SunFlare />}
       {isSnow && (
         <>
           <Snowfall />
@@ -186,8 +206,29 @@ function SceneLighting({ activeWorld }) {
           <pointLight position={[0, 0, 3]} color="#aabbaa" intensity={0.07} distance={10} decay={-40} castShadow={false} />
         </>
       )}
+      {isMushroom && (
+        <>
+          <fog attach="fog" args={['#3a1a30', 18, 75]} />
+          <directionalLight position={[-60, 15, -40]} color="#cc88bb" intensity={0.7} castShadow={false} />
+          <pointLight position={[0, 2, 0]} color="#ffbbdd" intensity={2.5} distance={25} decay={2} castShadow={false} />
+          <Fireflies />
+        </>
+      )}
+      {isOcean && (
+        <>
+          {/* Подводный туман — плотный синий */}
+          <fog attach="fog" args={['#062a4a', 15, 80]} />
+          {/* Солнечный свет сквозь воду сверху */}
+          <pointLight position={[0, 30, 0]} color="#00eeff" intensity={25} distance={80} decay={1.0} castShadow={false} />
+          {/* Отражение от дна */}
+          <pointLight position={[0, -5, 0]} color="#003366" intensity={8} distance={30} decay={1.5} castShadow={false} />
+          <Bubbles />
+        </>
+      )}
       {/* Thunder всегда в сцене — управляет звуком дождя через active prop */}
       <Thunder active={isJungle} />
+      <OceanAmbient active={isOcean} />
+      <WindAmbient active={activeWorld === 'snow'} />
     </>
   )
 }
@@ -244,6 +285,12 @@ function App() {
           <group visible={activeWorld === 'jungle'}>
             <Jungle scale={116} position={[95.8, -80.45, -71.8]} />
           </group>
+          <group visible={activeWorld === 'ocean'}>
+            <Ocean scale={1.8} position={[-44.1, -43.9, 2.7]} />
+          </group>
+          <group visible={activeWorld === 'mushroom'}>
+            <Mushroom scale={40} position={[-49.2, -41.75, 14.1]} />
+          </group>
           {activeWorld === 'snow' && (
             <>
               <TorchLight />
@@ -254,7 +301,7 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : 0, 0]} onToggle={setChestOpen} />
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
           {!chestOpen && started && (
             <Html position={[0, 9.5, 0]} center>
               <div style={{
@@ -290,6 +337,38 @@ function App() {
           background: 'linear-gradient(to bottom, rgba(180,185,188,0.25) 0%, transparent 50%)',
           pointerEvents: 'none', zIndex: 1,
         }} />
+      )}
+      {activeWorld === 'mushroom' && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at center, transparent 25%, rgba(60,10,50,0.6) 100%)',
+          pointerEvents: 'none', zIndex: 1,
+        }} />
+      )}
+      {activeWorld === 'ocean' && (
+        <>
+          {/* Синее виньетирование по краям */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,20,60,0.7) 100%)',
+            pointerEvents: 'none', zIndex: 1,
+          }} />
+          {/* Каустики — анимированные световые блики */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.15'/%3E%3C/svg%3E")`,
+            opacity: 0.3,
+            mixBlendMode: 'screen',
+            animation: 'caustics 4s ease-in-out infinite alternate',
+            pointerEvents: 'none', zIndex: 2,
+          }} />
+          {/* Общий синий тинт */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(0, 30, 80, 0.25)',
+            pointerEvents: 'none', zIndex: 1,
+          }} />
+        </>
       )}
       <MusicPlayer autoPlay={started} />
       {!started && <StartScreen onStart={() => setStarted(true)} />}
