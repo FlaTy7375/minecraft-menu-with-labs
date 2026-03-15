@@ -3,6 +3,7 @@ import { OrbitControls, Html } from '@react-three/drei'
 import { Suspense, useEffect, useState, useRef, useMemo } from 'react'
 import * as THREE from 'three'
 import { Model as Bed } from './app/models/Minecraft_bed'
+import { Model as Blocks } from './app/models/Minecraft_blocks'
 import { Model as World } from './app/models/Minecraft_world'
 import { Model as Desert } from './app/models/Minecraft_dessert'
 import { Model as Snow } from './app/models/Minecraft_snow'
@@ -41,7 +42,7 @@ const DESERT_SUN = new THREE.Vector3(-100, 20, 40)
 const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 
 // Позиция камеры: в пустыне сундук повёрнут -90° по Y, значит "спереди" — со стороны +X
-const CAM_DEFAULT = new THREE.Vector3(0, 10, 7)
+const CAM_DEFAULT = new THREE.Vector3(-4.90, 14.68, 18.40)
 const CAM_BED     = new THREE.Vector3(13.32, 10.81, 3.75)
 const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
 const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
@@ -69,7 +70,7 @@ function CameraController({ activeWorld, controlsRef }) {
     return CAM_DEFAULT
   }
 
-  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : [0, 7.4, 0]
+  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : w === 'default' ? [-4.90, 7.79, -0.15] : [0, 7.4, 0]
 
   useFrame(() => {
     if (prevWorld.current !== activeWorld) {
@@ -359,29 +360,77 @@ function App() {
             <Bed scale={46} position={[-37.37, -6.89, -6.65]} />
           </group>
           <group visible={activeWorld === 'default'}>
-            <World scale={50} position={[0, 0, 0]} />
+            <World scale={50} position={[-16, 0, 0]} />
+            {/* Кварцевая стена: 3 колонки × 3 ряда */}
+            {[-1.75 + 3.4 - 4.75, -1.75 + 3.4 - 1.7 - 4.75, -1.75 + 3.4 - 3.4 - 4.75].map((x, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.3]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'desert'}>
             <Desert scale={1.9} position={[69.8, -54.3, -12.4]} rotation={[0, 0, 0]} />
+            {/* стена позади сундука — камера с -X, стена на +X, ряды по Z */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'snow'}>
             <Snow scale={1.9} position={[96.03, -166.6, 0.9]} />
             <Torch scale={0.13} position={[1.8, 6.4, 3]} />
+            {/* камера с -X → стена на +X */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'jungle'}>
             <Jungle scale={116} position={[95.8, -80.45, -71.8]} />
+            {/* камера с +Z → стена на -Z */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((x, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -5.2]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'ocean'}>
             <Ocean scale={1.8} position={[-44.1, -43.9, 2.7]} />
+            {/* камера с +X → стена на -X */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-5.2, y, z]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'mushroom'}>
             <Mushroom scale={40} position={[-49.2, -41.75, 14.1]} />
+            {/* камера с +X → стена на -X */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-5.2, y, z]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'nether'}>
             <Nether scale={155} position={[54.17, 3.29, 44.25]} />
+            {/* камера с -X → стена на +X */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+              ))
+            )}
           </group>
           <group visible={activeWorld === 'end'}>
             <End scale={160} position={[98.15, -43, 67]} />
+            {/* камера с -X → стена на +X */}
+            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+              ))
+            )}
           </group>
           {activeWorld === 'snow' && (
             <>
