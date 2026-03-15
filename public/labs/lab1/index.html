@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица 12</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+            background-color: transparent;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .scale-wrap {
+            transform-origin: center center;
+            width: 900px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+            background-color: #fffde7;
+            border: 3px solid #1a237e;
+        }
+
+        caption {
+            font-weight: bold;
+            font-size: 17px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #1a237e;
+        }
+
+        td {
+            border: 3px solid #1a237e;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+
+        .bg-blue   { background-color: #5b9bd5; }
+        .bg-yellow { background-color: #ffd700; }
+        .bg-green  { background-color: #4caf50; }
+
+        .al { text-align: left;    vertical-align: top; }
+        .ar { text-align: right;   vertical-align: bottom; }
+        .ac { text-align: center;  vertical-align: middle; }
+        .aj { text-align: justify; vertical-align: top; }
+
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p.t { margin: 0; line-height: 1.5; }
+
+        ul, ol { margin: 0; padding-left: 18px; }
+
+        ol.list1 { list-style-type: decimal; color: #1b5e20; font-weight: bold; }
+        ol.list1 .list1-title { font-weight: bold; text-decoration: underline; margin-bottom: 4px; }
+        ol.list1 ol { list-style-type: lower-alpha; color: #0d47a1; font-weight: normal; }
+
+        ul.list2 { list-style: none; padding-left: 10px; }
+        ul.list2 li::before { content: "- "; }
+
+        ol.list3-l1 { list-style-type: upper-roman; color: #b71c1c; }
+        ol.list3-l1 > li { font-weight: bold; font-style: italic; text-decoration: underline; }
+        ol.list3-l2 { list-style-type: upper-alpha; color: #e65100; font-weight: bold; font-style: italic; }
+        ol.list3-l3 { list-style-type: decimal; color: #333; font-weight: normal; font-style: normal; }
+    </style>
+</head>
+<body>
+<div class="scale-wrap">
+
+<table>
+    <caption>Таблица 12 — Основы CSS</caption>
+
+    <tr>
+        <td class="bg-blue ac" rowspan="3" style="width: 14%;">
+            <div class="flex-row">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg"
+                     width="55" height="70" alt="CSS3" style="border:2px solid #1a237e;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg"
+                     width="55" height="70" alt="HTML5" style="border:2px solid #1a237e;">
+            </div>
+        </td>
+
+        <td class="bg-blue ac" style="width: 14%;">
+            <h1 style="margin:0; color:#1a237e;">Синтаксис CSS</h1>
+        </td>
+
+        <td class="bg-blue ac" style="width: 14%;">
+            <h2 style="margin:0; color:#7e1a1a;">Подключение</h2>
+        </td>
+
+        <td class="bg-yellow ac" colspan="2" style="width: 43%;">
+            <h3 style="margin:0; color:#a120ad;">Свойства оформления</h3>
+        </td>
+
+        <td class="bg-yellow al" rowspan="2" style="width: 14%;">
+            <div class="flex-row">
+                <ul class="list2">
+                    <li>px</li>
+                    <li>em / rem</li>
+                    <li>%</li>
+                    <li>vw / vh</li>
+                </ul>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg"
+                     width="40" height="50" alt="CSS" style="border:2px solid #e65100;">
+            </div>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="bg-blue al">
+            <p class="t" style="font-weight:bold; text-decoration:underline; color:#1b5e20; margin-bottom:4px;">Селекторы CSS</p>
+            <ol class="list1">
+                <li>Простые
+                    <ol>
+                        <li>Тег</li>
+                        <li>Класс (.class)</li>
+                        <li>ID (#id)</li>
+                    </ol>
+                </li>
+                <li>Псевдоклассы
+                    <ol>
+                        <li>:hover</li>
+                        <li>:focus</li>
+                    </ol>
+                </li>
+            </ol>
+        </td>
+
+        <td class="bg-blue aj" colspan="2">
+            <div class="flex-row">
+                <p class="t" style="font-weight:700;">
+                    CSS — язык описания внешнего вида документа.
+                    Стили подключают через &lt;link&gt;, &lt;style&gt; или атрибут style.
+                </p>
+                <p class="t" style="color:#555;">
+                    Каскад позволяет <em style="color:red;">переопределять</em> стили,
+                    а <strong style="color:blue;">специфичность</strong> определяет приоритет.
+                </p>
+            </div>
+        </td>
+
+        <td class="bg-yellow ar">
+            <ol class="list3-l1">
+                <li>Текст
+                    <ol class="list3-l2">
+                        <li>Шрифт
+                            <ol class="list3-l3">
+                                <li>font-size</li>
+                                <li>font-weight</li>
+                            </ol>
+                        </li>
+                        <li>Цвет
+                            <ol class="list3-l3">
+                                <li>color</li>
+                                <li>opacity</li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+                <li>Блок
+                    <ol class="list3-l2">
+                        <li>Размеры
+                            <ol class="list3-l3">
+                                <li>width</li>
+                                <li>height</li>
+                            </ol>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="bg-green aj">
+            <p class="t" style="font-style:italic; color:#ad1457; text-decoration:underline;">
+                Каскадность: побеждает правило с наибольшей специфичностью.
+                inline &gt; ID &gt; класс &gt; тег.
+            </p>
+        </td>
+
+        <td class="bg-blue aj" colspan="2">
+            <p class="t" style="color:#1565c0;">
+                Блочная модель (box model): content + padding + border + margin.
+                box-sizing: border-box включает padding и border в ширину элемента.
+            </p>
+        </td>
+
+        <td class="bg-blue al" colspan="2">
+            <p class="t" style="font-family: Impact, fantasy; color:#2e7d32;">
+                !important перекрывает все правила каскада.
+                Злоупотреблять не стоит — усложняет поддержку.
+            </p>
+        </td>
+    </tr>
+
+</table>
+
+</div>
+
+<script>
+    function fitScale() {
+        const wrap = document.querySelector('.scale-wrap')
+        const scaleX = (window.innerWidth * 0.95) / wrap.offsetWidth
+        const scaleY = (window.innerHeight * 0.95) / wrap.offsetHeight
+        const scale = Math.min(scaleX, scaleY, 1)
+        wrap.style.transform = `scale(${scale})`
+    }
+    fitScale()
+    window.addEventListener('resize', fitScale)
+</script>
+</body>
+</html>

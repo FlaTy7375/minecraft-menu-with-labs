@@ -182,6 +182,54 @@ function EndCrystalLight() {
   )
 }
 
+function WallLabel({ position, rotation, onClick }) {
+  const texture = useMemo(() => {
+    const tex = new THREE.TextureLoader().load('/images/lab1.png', (t) => {
+      // убираем белый фон через canvas
+      const img = t.image
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0)
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const d = data.data
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i+1], b = d[i+2]
+        // если пиксель близок к белому — делаем прозрачным
+        if (r > 230 && g > 230 && b > 230) d[i+3] = 0
+      }
+      ctx.putImageData(data, 0, 0)
+      const newTex = new THREE.CanvasTexture(canvas)
+      newTex.colorSpace = THREE.SRGBColorSpace
+      tex.image = newTex.image
+      tex.needsUpdate = true
+    })
+    tex.colorSpace = THREE.SRGBColorSpace
+    return tex
+  }, [])
+
+  return (
+    <group position={position} rotation={rotation}>
+      {/* видимый меш со скриншотом */}
+      <mesh position={[0, 0, 0.01]}>
+        <planeGeometry args={[4.2, 3]} />
+        <meshStandardMaterial map={texture} transparent alphaTest={0.1} roughness={0.8} metalness={0} />
+      </mesh>
+      {/* невидимый хитбокс чуть впереди блоков */}
+      <mesh
+        position={[0, 0, 0.05]}
+        onClick={(e) => { e.stopPropagation(); onClick() }}
+        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
+        onPointerOut={() => { document.body.style.cursor = 'auto' }}
+      >
+        <planeGeometry args={[4.2, 3]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+      </mesh>
+    </group>
+  )
+}
+
 function ToneMappingUpdater({ activeWorld }) {
   const { gl } = useThree()
   const getExposure = (w) => {
@@ -339,6 +387,13 @@ function App() {
   const [activeWorld, setActiveWorld] = useState('bed')
   const [wallModal, setWallModal] = useState(false)
   const [transitioning, setTransitioning] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 600)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
   const chestRef = useRef()
   const controlsRef = useRef()
   const transitionTimer = useRef()
@@ -460,6 +515,25 @@ function App() {
             </>
           )}
           <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? 0 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+
+          {/* Превью лабы на стене — текстура на плоскости */}
+          {activeWorld !== 'bed' && (() => {
+            const wallConfigs = {
+              default:  { pos: [-4.8,  9.2, 0.97], rot: [0, 0, 0] },
+              desert:   { pos: [-0.86,   9.2, -4.8], rot: [0,  -Math.PI / 2, 0] },
+              snow:     { pos: [-1.06,  9.2, -5], rot: [0,  -Math.PI / 2, 0] },
+              jungle:   { pos: [-4.85, 9.2, 1.1], rot: [0, 0, 0] },
+              ocean:    { pos: [0.9,  9.2,  5.15], rot: [0, Math.PI / 2, 0] },
+              mushroom: { pos: [0.9,  9.2,  5.15], rot: [0, Math.PI / 2, 0] },
+              nether:   { pos: [-0.9,  9.2, -4.75], rot: [0,  -Math.PI / 2, 0] },
+              end:      { pos: [-0.9,  9.2, -5.25], rot: [0,  -Math.PI / 2, 0] },
+            }
+            const cfg = wallConfigs[activeWorld]
+            if (!cfg) return null
+            return (
+              <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} />
+            )
+          })()}
           {/* label */}
           {!chestOpen && started && !wallModal && (
             <Html position={[0, 9.5, 0]} center transform sprite style={{ pointerEvents: 'none' }}>
@@ -507,12 +581,14 @@ function App() {
         <div onClick={() => setWallModal(false)} style={{
           position: 'absolute', inset: 0,
           background: 'rgba(0,0,0,0.6)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           zIndex: 1000,
         }}>
           <div onClick={(e) => e.stopPropagation()} style={{
             width: 'min(80vw, 580px)',
-            height: 'min(80vh, 580px)',
+            height: isMobile ? 'min(53vh, 387px)' : 'min(80vh, 580px)',
             position: 'relative',
             imageRendering: 'pixelated',
             background: `
@@ -558,7 +634,20 @@ function App() {
               fontFamily: "'Press Start 2P', monospace", fontSize: '10px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#333', boxShadow: '2px 2px 0 #555',
+              zIndex: 10,
             }}>✕</button>
+            <iframe
+              src="/labs/lab1/index.html"
+              style={{
+                position: 'relative',
+                zIndex: 5,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+              }}
+              title="Лабораторная работа №1"
+            />
           </div>
         </div>
       )}
@@ -656,9 +745,8 @@ function App() {
           }} />
         </>
       )}
-      {started && <MusicPlayer autoPlay={started} audioRef={audioRef} />}
+      {started && <MusicPlayer audioRef={audioRef} />}
       {!started && <StartScreen onStart={() => {
-        // Запускаем аудио прямо в обработчике клика — браузер разрешит autoplay
         if (!audioRef.current) audioRef.current = new Audio('/sounds/Subwoofer-Lullaby.mp3')
         audioRef.current.play().catch(() => {})
         setStarted(true)
