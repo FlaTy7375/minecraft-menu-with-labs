@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './ChestInventory.css'
 
 const WORLDS = [
+  { id: 'bed',      img: '/images/bed.webp',      label: 'Уютное утро',    desc: 'Розовый рассвет' },
   { id: 'default', img: '/images/dirt.webp',    label: 'Обычный мир',  desc: 'Зелёные луга и закат' },
   { id: 'desert',  img: '/images/desert.png',   label: 'Пустыня',      desc: 'Жаркий полдень и песок' },
   { id: 'snow',    img: '/images/snow.png',     label: 'Снежный мир',  desc: 'Холодные просторы' },
@@ -60,7 +61,7 @@ export function ChestInventory({ open, onClose, onSelectWorld, activeWorld }) {
           {WORLDS.map(w => (
             <Slot key={w.id} world={w} activeWorld={activeWorld} onSelectWorld={onSelectWorld} />
           ))}
-          {Array.from({ length: 19 }).map((_, i) => (
+          {Array.from({ length: 18 }).map((_, i) => (
             <Slot key={i + 2} />
           ))}
         </div>

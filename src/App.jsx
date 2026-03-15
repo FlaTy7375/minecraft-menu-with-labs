@@ -2,6 +2,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import { Suspense, useEffect, useState, useRef, useMemo } from 'react'
 import * as THREE from 'three'
+import { Model as Bed } from './app/models/Minecraft_bed'
 import { Model as World } from './app/models/Minecraft_world'
 import { Model as Desert } from './app/models/Minecraft_dessert'
 import { Model as Snow } from './app/models/Minecraft_snow'
@@ -12,6 +13,7 @@ import { Model as Mushroom } from './app/models/Minecraft_mushroom'
 import { Model as Nether } from './app/models/Minecraft_nether'
 import { Model as End } from './app/models/Minecraft_end'
 import { Model as Chest } from './app/models/Minecraft-chest'
+import { BedSky } from './app/textures/BedSky'
 import { CloudSky } from './app/textures/CloudSky'
 import { DesertSky } from './app/textures/DesertSky'
 import { SnowSky } from './app/textures/SnowSky'
@@ -40,6 +42,7 @@ const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 
 // Позиция камеры: в пустыне сундук повёрнут -90° по Y, значит "спереди" — со стороны +X
 const CAM_DEFAULT = new THREE.Vector3(0, 10, 7)
+const CAM_BED     = new THREE.Vector3(7, 10, 0)
 const CAM_DESERT  = new THREE.Vector3(-7, 10, 0)
 const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
 const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
@@ -55,6 +58,7 @@ function CameraController({ activeWorld, controlsRef }) {
   const prevWorld = useRef(null)
 
   const camForWorld = (w) => {
+    if (w === 'bed')    return CAM_BED
     if (w === 'desert') return CAM_DESERT
     if (w === 'snow')   return CAM_SNOW
     if (w === 'jungle') return CAM_JUNGLE
@@ -160,6 +164,7 @@ function EndCrystalLight() {
 function ToneMappingUpdater({ activeWorld }) {
   const { gl } = useThree()
   const getExposure = (w) => {
+    if (w === 'bed')      return 1.1
     if (w === 'desert')   return 1.0
     if (w === 'snow')     return 1.3
     if (w === 'jungle')   return 0.5
@@ -183,16 +188,17 @@ function SceneLighting({ activeWorld }) {
   const isMushroom = activeWorld === 'mushroom'
   const isNether   = activeWorld === 'nether'
   const isEnd      = activeWorld === 'end'
-  const sunPos     = isDesert ? DESERT_SUN : isSnow ? MOON_POS : isOcean ? new THREE.Vector3(80, 30, 0) : isMushroom ? new THREE.Vector3(60, 8, 40) : isEnd ? new THREE.Vector3(0, 50, 0) : SUNSET_SUN
+  const isBed      = activeWorld === 'bed'
+  const sunPos     = isDesert ? DESERT_SUN : isSnow ? MOON_POS : isOcean ? new THREE.Vector3(80, 30, 0) : isMushroom ? new THREE.Vector3(60, 8, 40) : isEnd ? new THREE.Vector3(0, 50, 0) : isBed ? new THREE.Vector3(60, 15, -80) : SUNSET_SUN
 
   return (
     <>
-      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : isOcean ? <OceanSky /> : isMushroom ? <MushroomSky /> : isNether ? <NetherSky /> : isEnd ? <EndSky /> : <CloudSky />}
+      {isDesert ? <DesertSky /> : isSnow ? <SnowSky /> : isJungle ? <JungleSky /> : isOcean ? <OceanSky /> : isMushroom ? <MushroomSky /> : isNether ? <NetherSky /> : isEnd ? <EndSky /> : isBed ? <BedSky /> : <CloudSky />}
 
       <directionalLight
         position={sunPos}
-        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : isOcean ? 4 : isMushroom ? 1.8 : isNether ? 2 : isEnd ? 1.5 : 8}
-        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : isOcean ? '#88bbff' : isMushroom ? '#ffaacc' : isNether ? '#ff4400' : isEnd ? '#cc99ff' : '#ff7000'}
+        intensity={isDesert ? 5 : isSnow ? 0 : isJungle ? 0.4 : isOcean ? 4 : isMushroom ? 1.8 : isNether ? 2 : isEnd ? 1.5 : isBed ? 3.5 : 8}
+        color={isDesert ? '#ffffff' : isSnow ? '#c8d8ff' : isJungle ? '#aaaaaa' : isOcean ? '#88bbff' : isMushroom ? '#ffaacc' : isNether ? '#ff4400' : isEnd ? '#cc99ff' : isBed ? '#ffbb88' : '#ff7000'}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-near={0.1}
@@ -221,10 +227,12 @@ function SceneLighting({ activeWorld }) {
                   ? <hemisphereLight args={['#cc2200', '#1a0000', 1.5]} />
                   : isEnd
                     ? <hemisphereLight args={['#3a1a66', '#0a0018', 1.6]} />
-                    : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
+                    : isBed
+                      ? <hemisphereLight args={['#ffccaa', '#a0b8d0', 1.4]} />
+                      : <hemisphereLight args={['#ff9040', '#3a1000', 1.8]} />
       }
 
-      {!isDesert && !isSnow && !isJungle && !isOcean && !isMushroom && !isNether && !isEnd && <SunFlare />}
+      {!isDesert && !isSnow && !isJungle && !isOcean && !isMushroom && !isNether && !isEnd && !isBed && <SunFlare />}
       {isSnow && (
         <>
           <Snowfall />
@@ -255,6 +263,17 @@ function SceneLighting({ activeWorld }) {
           <pointLight position={[0, 0, 0]} color="#ff6600" intensity={25} distance={50} decay={1.2} castShadow={false} />
           <pointLight position={[10, 5, -10]} color="#ff4400" intensity={10} distance={35} decay={1.5} castShadow={false} />
           <LavaParticles />
+        </>
+      )}
+      {isBed && (
+        <>
+          <fog attach="fog" args={['#e8956a', 30, 100]} />
+          {/* Основной рассветный луч — тёплое золото со стороны солнца */}
+          <directionalLight position={[60, 15, -80]} color="#ffaa44" intensity={2.5} castShadow={false} />
+          {/* Мягкий розовый fill с противоположной стороны */}
+          <pointLight position={[-20, 18, 10]} color="#ffaacc" intensity={15} distance={80} decay={1.2} castShadow={false} />
+          {/* Тёплый оранжевый снизу — отражение от земли */}
+          <pointLight position={[0, 3, 0]} color="#ff8833" intensity={8} distance={40} decay={1.8} castShadow={false} />
         </>
       )}
       {isEnd && (
@@ -296,7 +315,7 @@ function SceneLighting({ activeWorld }) {
 function App() {
   const [chestOpen, setChestOpen] = useState(false)
   const [started, setStarted] = useState(false)
-  const [activeWorld, setActiveWorld] = useState('default')
+  const [activeWorld, setActiveWorld] = useState('bed')
   const chestRef = useRef()
   const controlsRef = useRef()
 
@@ -332,6 +351,9 @@ function App() {
 
         <Suspense fallback={null}>
           {/* Все миры всегда в сцене — скрываем неактивные через visible чтобы не пересоздавать */}
+          <group visible={activeWorld === 'bed'}>
+            <Bed scale={46} position={[-45, -6.79, -10.5]} />
+          </group>
           <group visible={activeWorld === 'default'}>
             <World scale={50} position={[0, 0, 0]} />
           </group>
@@ -367,7 +389,7 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? Math.PI / 2 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
           {!chestOpen && started && (
             <Html position={[0, 9.5, 0]} center>
               <div style={{
@@ -390,6 +412,13 @@ function App() {
       </Canvas>
 
       <ChestInventory open={chestOpen} onClose={handleClose} onSelectWorld={handleSelectWorld} activeWorld={activeWorld} />
+      {activeWorld === 'bed' && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to top, rgba(255,160,80,0.15) 0%, transparent 50%)',
+          pointerEvents: 'none', zIndex: 1,
+        }} />
+      )}
       {activeWorld === 'snow' && (
         <div style={{
           position: 'absolute', inset: 0,
