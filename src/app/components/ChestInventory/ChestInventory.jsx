@@ -8,6 +8,7 @@ const WORLDS = [
   { id: 'jungle',  img: '/images/лианы.webp',   label: 'Джунгли',      desc: 'Тропический лес' },
   { id: 'ocean',    img: '/images/fish.webp',     label: 'Океан',         desc: 'Подводный монумент' },
   { id: 'mushroom', img: '/images/mushroom.png',  label: 'Грибной остров', desc: 'Мистический остров' },
+  { id: 'nether',   img: '/images/obsidian.webp', label: 'Незер',          desc: 'Огненное измерение' },
 ]
 
 function Tooltip({ label, desc }) {
@@ -58,7 +59,7 @@ export function ChestInventory({ open, onClose, onSelectWorld, activeWorld }) {
           {WORLDS.map(w => (
             <Slot key={w.id} world={w} activeWorld={activeWorld} onSelectWorld={onSelectWorld} />
           ))}
-          {Array.from({ length: 21 }).map((_, i) => (
+          {Array.from({ length: 20 }).map((_, i) => (
             <Slot key={i + 2} />
           ))}
         </div>
