@@ -7,6 +7,7 @@ useGLTF.setDecoderPath('/draco/')
 
 function QuartzBlock({ onClick, ...props }) {
   const { scene } = useGLTF('/models/minecraft_blocks_collection.glb')
+
   const clone = React.useMemo(() => {
     const c = SkeletonUtils.clone(scene)
     c.traverse(obj => {
@@ -18,10 +19,6 @@ function QuartzBlock({ onClick, ...props }) {
       if (!obj.isMesh) return
       obj.castShadow = false
       obj.receiveShadow = false
-      // Отключаем raycasting на невидимых мешах
-      if (obj.parent && !obj.parent.visible) {
-        obj.raycast = () => {}
-      }
       const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
       mats.forEach(mat => {
         if (mat.map) {
@@ -29,16 +26,9 @@ function QuartzBlock({ onClick, ...props }) {
           mat.map.needsUpdate = true
         }
       })
-    })
-    // Отключаем raycast на всех мешах кроме Cube004_3
-    c.traverse(obj => {
-      if (!obj.isMesh) return
       let isTarget = false
       let cur = obj
-      while (cur) {
-        if (cur.name === 'Cube004_3') { isTarget = true; break }
-        cur = cur.parent
-      }
+      while (cur) { if (cur.name === 'Cube004_3') { isTarget = true; break } cur = cur.parent }
       if (!isTarget) obj.raycast = () => {}
     })
     return c
@@ -48,6 +38,8 @@ function QuartzBlock({ onClick, ...props }) {
     <group
       {...props}
       onClick={onClick ? (e) => { e.stopPropagation(); onClick(e) } : undefined}
+      onPointerOver={onClick ? () => { document.body.style.cursor = 'pointer' } : undefined}
+      onPointerOut={onClick ? () => { document.body.style.cursor = 'auto' } : undefined}
     >
       <primitive object={clone} dispose={null} />
     </group>

@@ -23,16 +23,16 @@ import { OceanSky } from './app/textures/OceanSky'
 import { MushroomSky } from './app/textures/MushroomSky'
 import { NetherSky } from './app/textures/NetherSky'
 import { EndSky } from './app/textures/EndSky'
-import { Snowfall } from './app/components/Snowfall'
-import { Rainfall } from './app/components/Rainfall'
-import { Bubbles } from './app/components/Bubbles'
-import { Fireflies } from './app/components/Fireflies'
-import { LavaParticles } from './app/components/LavaParticles'
-import { EndParticles } from './app/components/EndParticles'
-import { OceanAmbient } from './app/components/OceanAmbient'
-import { WindAmbient } from './app/components/WindAmbient'
-import { NetherAmbient } from './app/components/NetherAmbient'
-import { Thunder } from './app/components/Thunder'
+import { Snowfall } from './app/components/effects/Snowfall'
+import { Rainfall } from './app/components/effects/Rainfall'
+import { Bubbles } from './app/components/effects/Bubbles'
+import { Fireflies } from './app/components/effects/Fireflies'
+import { LavaParticles } from './app/components/effects/LavaParticles'
+import { EndParticles } from './app/components/effects/EndParticles'
+import { OceanAmbient } from './app/components/effects/OceanAmbient'
+import { WindAmbient } from './app/components/effects/WindAmbient'
+import { NetherAmbient } from './app/components/effects/NetherAmbient'
+import { Thunder } from './app/components/effects/Thunder'
 import { ChestInventory } from './app/components/ChestInventory/ChestInventory'
 import { MusicPlayer } from './app/components/music/MusicPlayer'
 import { StartScreen } from './app/components/StartScreen/StartScreen'
@@ -338,12 +338,17 @@ function App() {
   const [started, setStarted] = useState(false)
   const [activeWorld, setActiveWorld] = useState('bed')
   const [wallModal, setWallModal] = useState(false)
+  const [transitioning, setTransitioning] = useState(false)
   const chestRef = useRef()
   const controlsRef = useRef()
+  const transitionTimer = useRef()
 
   function handleSelectWorld(world) {
     setActiveWorld(world)
     setWallModal(false)
+    setTransitioning(true)
+    clearTimeout(transitionTimer.current)
+    transitionTimer.current = setTimeout(() => setTransitioning(false), 1800)
     handleClose()
   }
 
@@ -442,6 +447,7 @@ function App() {
               ))
             )}
           </group>
+
           {activeWorld === 'snow' && (
             <>
               <TorchLight />
@@ -453,12 +459,12 @@ function App() {
             </>
           )}
           <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? 0 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
-          {/* label moved to DOM overlay */}
+          {/* label */}
           {!chestOpen && started && !wallModal && (
-            <Html position={[0, 9.5, 0]} center distanceFactor={12} style={{ pointerEvents: 'none' }}>
+            <Html position={[0, 9.5, 0]} center transform sprite style={{ pointerEvents: 'none' }}>
               <div style={{
                 fontFamily: "'Press Start 2P', monospace",
-                fontSize: '20px',
+                fontSize: '16px',
                 color: '#fff',
                 textShadow: '2px 2px 0 #000',
                 textAlign: 'center',
@@ -649,7 +655,7 @@ function App() {
           }} />
         </>
       )}
-      <MusicPlayer autoPlay={started} />
+      {started && <MusicPlayer autoPlay={started} />}
       {!started && <StartScreen onStart={() => setStarted(true)} />}
     </div>
   )
