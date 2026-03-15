@@ -1,5 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+@keyframes caustics {
+  0%   { transform: scale(1.0) translate(0px, 0px) rotate(0deg); opacity: 0.25; }
+  33%  { transform: scale(1.15) translate(-8px, 5px) rotate(2deg); opacity: 0.35; }
+  66%  { transform: scale(0.95) translate(5px, -8px) rotate(-1deg); opacity: 0.2; }
+  100% { transform: scale(1.1) translate(-3px, 3px) rotate(1deg); opacity: 0.3; }
+}
+
+@keyframes lavaPulse {
+  0%   { opacity: 0.7; }
+  100% { opacity: 1.0; }
+}
+
+@keyframes endPulse {
+  0%   { opacity: 0.7; }
+  100% { opacity: 1.0; }
 }
