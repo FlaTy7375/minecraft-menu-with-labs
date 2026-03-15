@@ -43,14 +43,14 @@ const MOON_POS   = new THREE.Vector3(-80, 80, -80)
 
 // Позиция камеры: в пустыне сундук повёрнут -90° по Y, значит "спереди" — со стороны +X
 const CAM_DEFAULT = new THREE.Vector3(-4.90, 14.68, 18.40)
-const CAM_BED     = new THREE.Vector3(13.32, 10.81, 3.75)
+const CAM_BED     = new THREE.Vector3(15.61, 10.82, 3.78)
 const CAM_DESERT  = new THREE.Vector3(-15.77, 13.68, -4.31)
-const CAM_SNOW    = new THREE.Vector3(-7, 10, 0)
-const CAM_JUNGLE  = new THREE.Vector3(0, 10, 7)
-const CAM_OCEAN    = new THREE.Vector3(7, 10, 0)
-const CAM_MUSHROOM = new THREE.Vector3(7, 10, 0)
-const CAM_NETHER   = new THREE.Vector3(-7, 10, 0)
-const CAM_END      = new THREE.Vector3(-7, 10, 0)
+const CAM_SNOW    = new THREE.Vector3(-20.30, 12.03, -5.07)
+const CAM_JUNGLE  = new THREE.Vector3(-4.78, 13.71, 19.83)
+const CAM_OCEAN    = new THREE.Vector3(20.52, 9.51, 5.20)
+const CAM_MUSHROOM = new THREE.Vector3(19.34, 10.91, 5.14)
+const CAM_NETHER   = new THREE.Vector3(-18.68, 10.17, -4.54)
+const CAM_END      = new THREE.Vector3(-20.27, 11.24, -5.30)
 
 function CameraController({ activeWorld, controlsRef }) {
   const { camera } = useThree()
@@ -82,7 +82,7 @@ function CameraController({ activeWorld, controlsRef }) {
     return CAM_DEFAULT
   }
 
-  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : w === 'default' ? [-4.90, 7.79, -0.15] : w === 'desert' ? [0.15, 7.81, -4.15] : [0, 7.4, 0]
+  const targetForWorld = (w) => w === 'bed' ? [-7.92, 10.71, 3.49] : w === 'default' ? [-4.90, 7.79, -0.15] : w === 'desert' ? [0.15, 7.81, -4.15] : w === 'snow' ? [0.16, 8.07, -4.99] : w === 'jungle' ? [-4.75, 7.74, -0.13] : w === 'ocean' ? [0.91, 6.88, 5.09] : w === 'mushroom' ? [-0.18, 7.62, 5.09] : w === 'nether' ? [-0.04, 7.72, -4.41] : w === 'end' ? [2.81, 11.24, -5.03] : [0, 7.4, 0]
 
   useFrame(() => {
     if (prevWorld.current !== activeWorld) {
@@ -139,11 +139,11 @@ function TorchGlow() {
     if (!spriteRef.current) return
     const t = clock.getElapsedTime()
     const f = 1.0 + Math.sin(t * 9.1) * 0.1 + Math.sin(t * 23.7) * 0.05 + Math.random() * 0.03
-    spriteRef.current.scale.setScalar(0.9 * f)
+    spriteRef.current.scale.setScalar(1.6 * f)
   })
 
   return (
-    <sprite ref={spriteRef} position={[1.8, 7.58, 3]}>
+    <sprite ref={spriteRef} position={[0.4, 7.55, -8.7]}>
       <spriteMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
     </sprite>
   )
@@ -158,11 +158,14 @@ function TorchLight() {
       + Math.sin(t * 9.1) * 0.12
       + Math.sin(t * 23.7) * 0.06
       + Math.sin(t * 4.3) * 0.08
-    if (lightRef.current) lightRef.current.intensity = 10.0 * flicker
+    if (lightRef.current) lightRef.current.intensity = 20.0 * flicker
   })
-  const torchPos = [1.8, 7.48, 3]
+  const torchPos = [0.4, 7.15, -8.7]
   return (
-    <pointLight ref={lightRef} position={torchPos} color="#ff7700" intensity={10} distance={35} decay={1.2} castShadow={false} />
+    <>
+      <pointLight ref={lightRef} position={torchPos} color="#ff7700" intensity={20} distance={35} decay={1.2} castShadow={false} />
+      <pointLight position={torchPos} color="#ffcc44" intensity={10} distance={6} decay={2} castShadow={false} />
+    </>
   )
 }
 
@@ -391,57 +394,57 @@ function App() {
             )}
           </group>
           <group visible={activeWorld === 'snow'}>
-            <Snow scale={1.9} position={[96.03, -166.6, 0.9]} />
-            <Torch scale={0.13} position={[1.8, 6.4, 3]} />
+            <Snow scale={1.9} position={[96.03, -166.6, -7.6]} />
+            <Torch scale={0.13} position={[0.4, 6.4, -8.7]} />
             {/* камера с -X → стена на +X */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+            {[-1.75 + 3.4 - 8.4, -1.75 + 3.4 - 10.1, -1.75 + 3.4 - 11.8].map((z, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-0.2, y, z]} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'jungle'}>
-            <Jungle scale={116} position={[95.8, -80.45, -71.8]} />
+            <Jungle scale={116} position={[91.1, -80.45, -70.2]} />
             {/* камера с +Z → стена на -Z */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((x, col) =>
+            {[-6.55 + 3.4, -6.55 + 3.4 - 1.7, -6.55 + 3.4 - 3.4].map((x, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -5.2]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[x, y, -3.2]} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'ocean'}>
-            <Ocean scale={1.8} position={[-44.1, -43.9, 2.7]} />
+            <Ocean scale={1.8} position={[-44.1, -43.9, 8.1]} />
             {/* камера с +X → стена на -X */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
-              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-5.2, y, z]} />
+            {[0.1 + 3.4, 0.1 + 3.4 - 1.7, 0.1 + 3.4 - 3.4].map((z, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'mushroom'}>
-            <Mushroom scale={40} position={[-49.2, -41.75, 14.1]} />
+            <Mushroom scale={40} position={[-49.2, -41.75, 15.76]} />
             {/* камера с +X → стена на -X */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
+            {[0.1 + 3.4, 0.1 + 3.4 - 1.7, 0.1 + 3.4 - 3.4].map((z, col) =>
               [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[-5.2, y, z]} />
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'nether'}>
-            <Nether scale={155} position={[54.17, 3.29, 44.25]} />
+            <Nether scale={155} position={[54.17, 3.29, 44.32]} />
             {/* камера с -X → стена на +X */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
-              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+            {[-9.9 + 3.4, -9.9 + 3.4 - 1.7, -9.9 + 3.4 - 3.4].map((z, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
               ))
             )}
           </group>
           <group visible={activeWorld === 'end'}>
-            <End scale={160} position={[98.15, -43, 67]} />
+            <End scale={160} position={[98.15, -43, 60]} />
             {/* камера с -X → стена на +X */}
-            {[-1.75 + 3.4, -1.75 + 3.4 - 1.7, -1.75 + 3.4 - 3.4].map((z, col) =>
-              [6.6, 6.6 + 1.7, 6.6 + 3.4].map((y, row) => (
-                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[5.2, y, z]} />
+            {[-10.4 + 3.4, -10.4 + 3.4 - 1.7, -10.4 + 3.4 - 3.4].map((z, col) =>
+              [6.5, 6.5 + 1.7, 6.5 + 3.4].map((y, row) => (
+                <Blocks key={`q-${col}-${row}`} scale={1.7} position={[0, y, z]} />
               ))
             )}
           </group>
@@ -461,7 +464,7 @@ function App() {
             <Html position={[0, 9.5, 0]} center distanceFactor={12}>
               <div style={{
                 fontFamily: "'Press Start 2P', monospace",
-                fontSize: '14px',
+                fontSize: '20px',
                 color: '#fff',
                 textShadow: '2px 2px 0 #000',
                 textAlign: 'center',
@@ -469,20 +472,20 @@ function App() {
                 pointerEvents: 'none',
                 userSelect: 'none',
               }}>
-                Лабы здесь<br />↓
+                <span className="mc-label-pulse">Лабы здесь</span><br /><span className="arrow-bounce">↓</span>
               </div>
             </Html>
           )}
           {activeWorld === 'bed' && !chestOpen && started && (
             <Html position={[5, 14, 3.7]} center distanceFactor={14}>
-              <div style={{
+              <div className="mc-welcome-intro" style={{
                 fontFamily: "'Press Start 2P', monospace",
-                fontSize: 'clamp(8px, 1.2vw, 11px)',
+                fontSize: 'clamp(13px, 1.2vw, 11px)',
                 color: '#fff',
                 textShadow: '2px 2px 0 #000',
                 textAlign: 'center',
                 lineHeight: '1.8',
-                width: '80vw',
+                width: '90vw',
                 maxWidth: '520px',
                 whiteSpace: 'normal',
                 pointerEvents: 'none',
