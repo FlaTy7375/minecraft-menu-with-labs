@@ -214,7 +214,7 @@ function WallLabel({ position, rotation, onClick, imageSrc = '/images/lab1.png' 
       {/* видимый меш со скриншотом */}
       <mesh position={[0, 0, 0.01]}>
         <planeGeometry args={[4.2, 3]} />
-        <meshStandardMaterial map={texture} transparent alphaTest={0.1} roughness={0.8} metalness={0} />
+        <meshStandardMaterial map={texture} transparent alphaTest={0.1} roughness={0.8} metalness={0} emissive={new THREE.Color(0xffffff)} emissiveMap={texture} emissiveIntensity={0.01} />
       </mesh>
       {/* невидимый хитбокс чуть впереди блоков */}
       <mesh
@@ -530,7 +530,7 @@ function App() {
             }
             const cfg = wallConfigs[activeWorld]
             if (!cfg) return null
-            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : '/images/lab1.png'
+            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : activeWorld === 'snow' ? '/images/lab3.png' : '/images/lab1.png'
             return (
               <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} imageSrc={labImage} />
             )
@@ -638,7 +638,7 @@ function App() {
               zIndex: 10,
             }}>✕</button>
             <iframe
-              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : '/labs/lab1/index.html'}
+              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : activeWorld === 'snow' ? '/labs/lab3/html/index.html' : '/labs/lab1/index.html'}
               style={{
                 position: 'relative',
                 zIndex: 5,
@@ -647,7 +647,7 @@ function App() {
                 border: 'none',
                 background: 'transparent',
               }}
-              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : 'Лабораторная работа №1'}
+              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : activeWorld === 'snow' ? 'Лабораторная работа №3' : 'Лабораторная работа №1'}
             />
           </div>
         </div>
