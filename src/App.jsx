@@ -182,9 +182,14 @@ function EndCrystalLight() {
   )
 }
 
-function WallLabel({ position, rotation, onClick, imageSrc = '/images/lab1.png' }) {
+function WallLabel({ position, rotation, onClick, imageSrc = '/images/lab1.png', removeWhite = true }) {
   const texture = useMemo(() => {
     const tex = new THREE.TextureLoader().load(imageSrc, (t) => {
+      if (!removeWhite) {
+        tex.colorSpace = THREE.SRGBColorSpace
+        tex.needsUpdate = true
+        return
+      }
       // убираем белый фон через canvas
       const img = t.image
       const canvas = document.createElement('canvas')
@@ -207,14 +212,14 @@ function WallLabel({ position, rotation, onClick, imageSrc = '/images/lab1.png' 
     })
     tex.colorSpace = THREE.SRGBColorSpace
     return tex
-  }, [imageSrc])
+  }, [imageSrc, removeWhite])
 
   return (
     <group position={position} rotation={rotation}>
       {/* видимый меш со скриншотом */}
       <mesh position={[0, 0, 0.01]}>
         <planeGeometry args={[4.2, 3]} />
-        <meshStandardMaterial map={texture} transparent alphaTest={0.1} roughness={0.8} metalness={0} emissive={new THREE.Color(0xffffff)} emissiveMap={texture} emissiveIntensity={0.01} />
+        <meshStandardMaterial map={texture} transparent alphaTest={0.1} roughness={0.8} metalness={0} emissive={new THREE.Color(0xffffff)} emissiveMap={texture} emissiveIntensity={removeWhite ? 0.01 : 0.06} />
       </mesh>
       {/* невидимый хитбокс чуть впереди блоков */}
       <mesh
@@ -530,9 +535,9 @@ function App() {
             }
             const cfg = wallConfigs[activeWorld]
             if (!cfg) return null
-            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : activeWorld === 'snow' ? '/images/lab3.png' : '/images/lab1.png'
+            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : activeWorld === 'snow' ? '/images/lab3.png' : activeWorld === 'jungle' ? '/images/lab4.png' : '/images/lab1.png'
             return (
-              <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} imageSrc={labImage} />
+              <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} imageSrc={labImage} removeWhite={activeWorld !== 'jungle'} />
             )
           })()}
           {/* label */}
@@ -638,7 +643,7 @@ function App() {
               zIndex: 10,
             }}>✕</button>
             <iframe
-              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : activeWorld === 'snow' ? '/labs/lab3/html/index.html' : '/labs/lab1/index.html'}
+              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : activeWorld === 'snow' ? '/labs/lab3/html/index.html' : activeWorld === 'jungle' ? '/labs/lab4/html/index.html' : '/labs/lab1/index.html'}
               style={{
                 position: 'relative',
                 zIndex: 5,
@@ -647,7 +652,7 @@ function App() {
                 border: 'none',
                 background: 'transparent',
               }}
-              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : activeWorld === 'snow' ? 'Лабораторная работа №3' : 'Лабораторная работа №1'}
+              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : activeWorld === 'snow' ? 'Лабораторная работа №3' : activeWorld === 'jungle' ? 'Лабораторная работа №4' : 'Лабораторная работа №1'}
             />
           </div>
         </div>

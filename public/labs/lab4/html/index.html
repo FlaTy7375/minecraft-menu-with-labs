@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Опрос студента — Учебный портал</title>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">＋</div>
+            <div class="logo-text">
+                <span class="logo-main">UniStudy</span>
+                <span class="logo-sub">Учебный портал</span>
+            </div>
+        </div>
+        <span class="header-badge">Лабораторная работа №4</span>
+    </header>
+
+    <div class="layout">
+
+        <article class="article">
+            <div class="article-bg"></div>
+            <form class="survey-form" id="surveyForm" novalidate>
+                <h2 class="form-title">Опрос студента вуза<br><span>о проблемах обучения</span></h2>
+
+                <!-- input text -->
+                <div class="field">
+                    <label for="name">ФИО студента</label>
+                    <input type="text" id="name" name="name" placeholder="Иванов Иван Иванович" required minlength="3">
+                    <span class="field-hint">обязательное поле</span>
+                </div>
+
+                <!-- email -->
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="student@university.by" required>
+                    <span class="field-hint">обязательное поле</span>
+                </div>
+
+                <!-- input week -->
+                <div class="field">
+                    <label for="week">Учебная неделя</label>
+                    <input type="week" id="week" name="week" required>
+                </div>
+
+                <!-- input number -->
+                <div class="field">
+                    <label for="course">Курс обучения</label>
+                    <input type="number" id="course" name="course" min="1" max="5" step="1" size="5" placeholder="1–5" required>
+                </div>
+
+                <!-- select / option value -->
+                <div class="field">
+                    <label for="faculty">Факультет</label>
+                    <select id="faculty" name="faculty" required>
+                        <option value="">— выберите —</option>
+                        <option value="fitu">ФИТУ</option>
+                        <option value="fksis">ФКСИС</option>
+                        <option value="fre">ФРЭ</option>
+                        <option value="ief">ИЭФ</option>
+                        <option value="other">Другой</option>
+                    </select>
+                </div>
+
+                <!-- radio -->
+                <div class="field">
+                    <label class="label-block">Форма обучения</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="form" value="full" required> Очная
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="form" value="part"> Заочная
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="form" value="remote"> Дистанционная
+                        </label>
+                    </div>
+                </div>
+
+                <!-- checkbox -->
+                <div class="field">
+                    <label class="label-block">Проблемы в обучении</label>
+                    <div class="checkbox-group">
+                        <label class="check-label"><input type="checkbox" name="problems" value="load"> Высокая нагрузка</label>
+                        <label class="check-label"><input type="checkbox" name="problems" value="material"> Сложный материал</label>
+                        <label class="check-label"><input type="checkbox" name="problems" value="time"> Нехватка времени</label>
+                        <label class="check-label"><input type="checkbox" name="problems" value="online"> Проблемы с онлайн-форматом</label>
+                        <label class="check-label"><input type="checkbox" name="problems" value="teachers"> Взаимодействие с преподавателями</label>
+                        <label class="check-label check-none"><input type="checkbox" name="problems" value="none" id="noneCheckbox"> Проблем нет</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">                  
+                    <button type="reset" class="btn btn-reset">Очистить</button>
+                    <button type="button" class="btn btn-submit">Посмотреть результаты</button>
+                </div>
+            </form>
+        </article>
+
+        <nav class="main-nav">
+            <span class="nav-title">Навигация</span>
+            <a href="#" class="nav-link active">📋 Опрос</a>
+            <a href="#" class="nav-link">📖 О портале</a>
+            <a href="#" class="nav-link">📞 Контакты</a>
+            <a href="#" class="nav-link">❓ Помощь</a>
+        </nav>
+
+        <aside class="aside">
+            <div class="aside-block">
+                <h3 class="aside-title">Статистика</h3>
+                <div class="aside-stat">
+                    <span class="stat-num">47</span>
+                    <span class="stat-label">участников</span>
+                </div>
+                <div class="aside-stat">
+                    <span class="stat-num">3</span>
+                    <span class="stat-label">факультета</span>
+                </div>
+            </div>
+            <div class="aside-block">
+                <h3 class="aside-title">Важно</h3>
+                <p class="aside-text">Данные используются только в учебных целях и не передаются третьим лицам.</p>
+            </div>
+            <div class="aside-block aside-notice">
+                <div class="notice-icon">ℹ</div>
+                <p class="aside-text">Заполнение занимает около 3 минут.</p>
+            </div>
+        </aside>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-col">
+            <span class="footer-label">портал</span>
+            <span>UniStudy</span>
+        </div>
+        <div class="footer-col">
+            <span class="footer-label">дисциплина</span>
+            <span>Веб-технологии</span>
+        </div>
+        <div class="footer-col">
+            <span class="footer-label">год</span>
+            <span>2026</span>
+        </div>
+    </footer>
+
+    <!-- Модальное окно с результатами -->
+    <div class="modal" id="resultsModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-logo">
+                    <div class="logo-icon">＋</div>
+                    <span class="logo-main">UniStudy</span>
+                </div>
+                <h2 class="modal-title">Результаты опроса</h2>
+            </div>
+
+            <div class="modal-body">
+                <table class="results-table" id="resultsTable" border="1">
+                    <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Email</th>
+                            <th>Неделя</th>
+                            <th>Курс</th>
+                            <th>Факультет</th>
+                            <th>Форма</th>
+                            <th>Проблемы</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <!-- заполняется через JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-back" id="backBtn">← Вернуться к форме</button>
+                <button class="btn btn-show-all" id="showAllBtn">Показать всех</button>
+                <button class="btn btn-close-modal" id="closeModalBtn">Закрыть окно</button>
+            </div>
+        </div>
+    </div>
+    <script src="../js/index.js"></script>
+</body>
+</html>
