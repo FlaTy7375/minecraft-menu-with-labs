@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Максим — Frontend</title>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Максим</div>
+        <a class="header-phone" href="tel:+375445553245">+375 44 553-66-71</a>
+    </header>
+    <nav class="main-nav">
+        <button class="nav-btn" data-modal="skills">
+            <span class="nav-num">01</span>
+            <span class="nav-label">навыки</span>
+        </button>
+        <button class="nav-btn" data-modal="projects">
+            <span class="nav-num">02</span>
+            <span class="nav-label">проекты</span>
+        </button>
+        <button class="nav-btn" data-modal="about">
+            <span class="nav-num">03</span>
+            <span class="nav-label">обо мне</span>
+        </button>
+        <button class="nav-btn" data-modal="contacts">
+            <span class="nav-num">04</span>
+            <span class="nav-label">контакты</span>
+        </button>
+    </nav>
+
+    <div class="controls-bar">
+        <input type="text" class="menu-input" id="menuInput" placeholder="Новый пункт...">
+        <div class="color-selector" id="colorSelector">
+            <div class="color-option" data-color="#d63523" style="background: #d63523;"></div>
+            <div class="color-option" data-color="#e47d24" style="background: #e47d24;"></div>
+            <div class="color-option" data-color="#e02cce" style="background: #e02cce;"></div>
+            <div class="color-option" data-color="#8e44ad" style="background: #8e44ad;"></div>
+            <div class="color-option active" data-color="#6743e8" style="background: #6743e8;"></div>
+        </div>
+        <button class="add-button" id="addBtn">добавить</button>
+    </div>
+
+    <main class="main-page">
+        
+        <article class="main-article">
+            <div class="big-number">01</div>
+            <section class="main-section">
+                <div class="section-tag">frontend dev</div>
+                <h1 class="section-title">
+                    Максим,<br>
+                    фронтенд разработчик
+                </h1>
+                <p class="section-text">
+                    Работаю с React и Next. Люблю когда интерфейсы работают быстро 
+                    и не тормозят. Интересуюсь в работе с 3d на Three.js.
+                </p>
+                <div class="tech-list">
+                    <span>React</span>
+                    <span>Next</span>
+                    <span>CSS</span>
+                    <span>Three.js</span>
+                    <span>Express</span>
+                </div>
+            </section>
+        </article>
+
+        <aside class="main-aside">
+            <div class="red-block">
+                <h3 class="aside-title">последнее</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-date">15.03</span>
+                        <p class="timeline-text">Создал проект для просмотра лаб в 3d</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-date">08.03</span>
+                        <p class="timeline-text">Переделал портфолио</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-box">
+                <div class="status-dot"></div>
+                <span>открыт к предложениям</span>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-col">
+            <span class="footer-label">где</span>
+            <span>Минск, Беларусь</span>
+            <span>удалённая работа</span>
+        </div>
+        <div class="footer-col">
+            <span class="footer-label">когда</span>
+            <span>пн–пт 09:00–18:00</span>
+            <span>выходные — по настроению</span>
+        </div>
+    </footer>
+
+    <!-- Модалки -->
+    <div class="modal" id="skillsModal">
+        <div class="modal-box">
+            <button class="modal-close">✕</button>
+            <h2 class="modal-heading">НАВЫКИ</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <span class="skill-name">React / Next.js</span>
+                    <span class="skill-level">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">JS/TS</span>
+                    <span class="skill-level">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">CSS/SCSS/LESS/Tailwind</span>
+                    <span class="skill-level">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">Three.js</span>
+                    <span class="skill-level">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">Redux</span>
+                    <span class="skill-level">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">Express</span>
+                    <span class="skill-level">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="projectsModal">
+        <div class="modal-box">
+            <button class="modal-close">✕</button>
+            <h2 class="modal-heading">ПРОЕКТЫ</h2>
+            <div class="projects-list">
+                <div class="project-item">
+                    <span class="project-name">3D Minecraft menu</span>
+                    <span class="project-tech">Three.js</span>
+                </div>
+                <div class="project-item">
+                    <span class="project-name">Корпоративный сайт с админ панелью</span>
+                    <span class="project-tech">Next.js</span>
+                </div>
+                <div class="project-item">
+                    <span class="project-name">Интернет-магазин</span>
+                    <span class="project-tech">Next.js</span>
+                </div>
+                <div class="project-item">
+                    <span class="project-name">Кликер по поимке екаев</span>
+                    <span class="project-tech">Next.js</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="aboutModal">
+        <div class="modal-box">
+            <button class="modal-close">✕</button>
+            <h2 class="modal-heading">ОБО МНЕ</h2>
+            <div class="about-text">
+                <p>19 лет, занимаюсь фронтендом с 2021 года.</p>
+                <p>Начинал с простых лендингов, потом перешёл на react. Сейчас интересуюсь next, webgl и three.js — нравится делать интерактивные штуки.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="contactsModal">
+        <div class="modal-box">
+            <button class="modal-close">✕</button>
+            <h2 class="modal-heading">КОНТАКТЫ</h2>
+            <div class="contacts-list">
+                <div class="contact-item">
+                    <span class="contact-label">email</span>
+                    <a href="mailto:flaty7375@gmail.com" class="contact-value">flaty7375@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">telegram</span>
+                    <a href="https://t.me/flaty3" class="contact-value">@flaty3</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">github</span>
+                    <a href="https://github.com/FlaTy7375" class="contact-value">https://github.com/FlaTy7375</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">тел</span>
+                    <a href="tel:+375445536671" class="contact-value">+375 44 553-66-71</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="resultModal">
+        <div class="modal-box">
+            <button class="modal-close">✕</button>
+            <h2 class="modal-heading">МЕНЮ</h2>
+            <ul class="result-menu" id="resultMenu"></ul>
+        </div>
+    </div>
+
+    <script src="../js/index.js"></script>
+</body>
+</html>

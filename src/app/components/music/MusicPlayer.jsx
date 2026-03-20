@@ -4,61 +4,92 @@ import './MusicPlayer.css'
 const TRACKS = [
   { name: 'Subwoofer Lullaby', src: '/sounds/Subwoofer-Lullaby.mp3' },
   { name: 'Living Mice',       src: '/sounds/Living-Mice.mp3' },
-  { name: 'Door',             src: '/sounds/Door.mp3' },
-  { name: 'Key',             src: '/sounds/Key.mp3' },
+  { name: 'Door',              src: '/sounds/Door.mp3' },
+  { name: 'Key',               src: '/sounds/Key.mp3' },
 ]
 
-export function MusicPlayer({ autoPlay = false }) {
+export function MusicPlayer({ audioRef: externalRef }) {
   const [current, setCurrent] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
-  const audio = useRef(null)
+  const internalRef = useRef(null)
+  const audioRef = externalRef ?? internalRef
+  const isFirst = useRef(true)
+  const shouldPlay = useRef(false) // запоминаем нужно ли играть после смены трека
 
-  // Создаём audio один раз
-  if (!audio.current) {
-    audio.current = new Audio(TRACKS[0].src)
+  if (!audioRef.current) {
+    audioRef.current = new Audio(TRACKS[0].src)
   }
 
-  // Запуск когда пользователь нажал Start
+  // play/pause — один раз
   useEffect(() => {
-    if (autoPlay) {
-      audio.current.play().then(() => setPlaying(true)).catch(() => {})
+    const a = audioRef.current
+    const onPlay  = () => { setPlaying(true); shouldPlay.current = true }
+    const onPause = () => { setPlaying(false); shouldPlay.current = false }
+    a.addEventListener('play',  onPlay)
+    a.addEventListener('pause', onPause)
+    setPlaying(!a.paused)
+    shouldPlay.current = !a.paused
+    return () => {
+      a.removeEventListener('play',  onPlay)
+      a.removeEventListener('pause', onPause)
     }
-  }, [autoPlay])
+  }, []) // eslint-disable-line
 
-  // Смена трека
+  // каждый трек: ended + loadedmetadata + смена src (кроме первого)
   useEffect(() => {
-    const a = audio.current
-    const wasPlaying = playing
+    const a = audioRef.current
+
+    if (isFirst.current) {
+      isFirst.current = false
+      // первый трек уже играет — только слушаем meta и ended
+      const onMeta = () => setDuration(a.duration)
+      const onEnd  = () => {
+        shouldPlay.current = true // трек закончился — следующий должен играть
+        setCurrent(i => (i + 1) % TRACKS.length)
+      }
+      if (a.duration) setDuration(a.duration)
+      a.addEventListener('loadedmetadata', onMeta)
+      a.addEventListener('ended', onEnd)
+      return () => {
+        a.removeEventListener('loadedmetadata', onMeta)
+        a.removeEventListener('ended', onEnd)
+      }
+    }
+
+    // меняем трек
     a.src = TRACKS[current].src
     a.load()
-    if (wasPlaying) a.play().then(() => setPlaying(true)).catch(() => {})
+    if (shouldPlay.current) a.play().catch(() => {})
 
     const onMeta = () => setDuration(a.duration)
-    const onEnd = () => setCurrent(i => (i + 1) % TRACKS.length)
+    const onEnd  = () => {
+      shouldPlay.current = true
+      setCurrent(i => (i + 1) % TRACKS.length)
+    }
     a.addEventListener('loadedmetadata', onMeta)
     a.addEventListener('ended', onEnd)
     return () => {
       a.removeEventListener('loadedmetadata', onMeta)
       a.removeEventListener('ended', onEnd)
     }
-  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [current]) // eslint-disable-line
 
-  // Прогресс — обновляем раз в секунду через interval
+  // прогресс
   useEffect(() => {
     const id = setInterval(() => {
-      const a = audio.current
-      if (!a.paused) setProgress(a.currentTime)
+      const a = audioRef.current
+      if (a && !a.paused) setProgress(a.currentTime)
     }, 500)
     return () => clearInterval(id)
-  }, [])
+  }, []) // eslint-disable-line
 
   function togglePlay() {
-    const a = audio.current
-    if (a.paused) { a.play(); setPlaying(true) }
-    else { a.pause(); setPlaying(false) }
+    const a = audioRef.current
+    if (a.paused) a.play().catch(() => {})
+    else a.pause()
   }
 
   function prev() { setCurrent(i => (i - 1 + TRACKS.length) % TRACKS.length) }
@@ -66,15 +97,13 @@ export function MusicPlayer({ autoPlay = false }) {
 
   function seek(e) {
     const val = parseFloat(e.target.value)
-    audio.current.currentTime = val
+    audioRef.current.currentTime = val
     setProgress(val)
   }
 
   function fmt(s) {
     if (!s || isNaN(s)) return '0:00'
-    const m = Math.floor(s / 60)
-    const sec = Math.floor(s % 60)
-    return `${m}:${sec.toString().padStart(2, '0')}`
+    return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
   }
 
   return (
@@ -83,7 +112,6 @@ export function MusicPlayer({ autoPlay = false }) {
         <span className="mc-player-title">♪ {TRACKS[current].name}</span>
         <span className="mc-player-toggle">{expanded ? '▲' : '▼'}</span>
       </div>
-
       {expanded && (
         <div className="mc-player-body">
           <div className="mc-player-controls">
@@ -96,12 +124,8 @@ export function MusicPlayer({ autoPlay = false }) {
           <div className="mc-player-seek">
             <span className="mc-time">{fmt(progress)}</span>
             <input
-              type="range"
-              className="mc-range"
-              min={0}
-              max={duration || 1}
-              step={1}
-              value={progress}
+              type="range" className="mc-range"
+              min={0} max={duration || 1} step={1} value={progress}
               onChange={seek}
             />
             <span className="mc-time">{fmt(duration)}</span>
