@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №5 - Магазин техники</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Подводный магазин техники</h1>
+        
+        <h2>Форма заполнения</h2>
+        <div id="mainForm">
+            <div class="form-group">
+                <label>Название устройства</label>
+                <input type="text" id="devName" placeholder="Например: Сервер Prismarine X1">
+            </div>
+            <div class="form-group">
+                <label>Дата поступления</label>
+                <input type="date" id="devDate">
+            </div>
+            <div class="form-group">
+                <label>Вид доставки</label>
+                <select id="devDelivery">
+                    <option value="Курьер">Курьер (Телепортация)</option>
+                    <option value="Самовывоз">Самовывоз (Лодка)</option>
+                    <option value="Почта">Почта (Дельфины)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Реквизиты производителя</label>
+                <input type="text" id="devManufacturer" placeholder="ООО ОкеанИнвест">
+            </div>
+            
+            <div id="dynamicFieldsContainer" class="hidden">
+                <!-- Сюда будут добавляться новые поля -->
+            </div>
+
+            <div class="controls-grid">
+                <button class="btn" onclick="app.uiAddRecord()">Ввести новую запись</button>
+                <button class="btn" onclick="app.uiClearForm()">Очистить форму</button>
+                <button class="btn" onclick="app.uiFilterRecords()">Фильтр по виду доставки</button>
+                <button class="btn" onclick="app.uiShowAll()">Показать все</button>
+            </div>
+        </div>
+
+        <h2>Управление записями</h2>
+        <div class="action-bar">
+            <label>Выбор ID:</label>
+            <select id="idSelect"></select>
+            <button class="btn btn-danger" onclick="app.uiDeleteRecord()">Удалить запись</button>
+        </div>
+
+        <h2>Добавление / Удаление свойств</h2>
+        <div class="prop-container action-bar">
+            <div class="form-group" style="margin:0;">
+                <label>Свойство</label>
+                <select id="newPropName">
+                    <option value="Адрес">Адрес компании</option>
+                    <option value="Телефон">Телефон</option>
+                    <option value="Рейтинг">Рейтинг (1-10)</option>
+                    <option value="Гарантия">Гарантия (мес)</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label>Значение по умолчанию</label>
+                <input type="text" id="newPropValue" placeholder="Для всех текущих">
+            </div>
+            <button class="btn" onclick="app.uiAddProperty()">Добавить свойство</button>
+            <button class="btn btn-danger" onclick="app.uiRemoveProperty()">Убрать свойство</button>
+        </div>
+        
+        <div class="log-box" id="logBox">Система инициализирована...</div>
+
+        <h2>Таблица наличия</h2>
+        <div style="overflow-x: auto;">
+            <table id="dataTable">
+                <thead>
+                    <tr id="tableHead">
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Дата</th>
+                        <th>Доставка</th>
+                        <th>Реквизиты</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
