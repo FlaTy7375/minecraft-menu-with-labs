@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №7 - Прайс-лист Незера</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="title-banner">Прайс-лист "Nether Trading Co."</h2>
+
+        <div class="controls-container">
+            <div class="control-box">
+                <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top; margin-right: 5px;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.43-2.96 3.11-3.32V4h2.67v1.92c1.38.33 2.53 1.34 2.74 2.97h-1.95c-.07-.94-.7-1.74-2.32-1.74-1.55 0-2.15.82-2.15 1.49 0 .84.53 1.44 2.87 2.01 2.7.66 3.98 1.81 3.98 3.75 0 2.02-1.61 3.1-3.18 3.49z"/>
+                    </svg>Настройки коэффициента
+                </h3>
+                <label>Коэффициент изменения:</label>
+                <select id="coefSelect">
+                    <option value="0.05">5% (0.05)</option>
+                    <option value="0.10">10% (0.10)</option>
+                    <option value="0.15">15% (0.15)</option>
+                    <option value="0.20">20% (0.20)</option>
+                    <option value="0.50">50% (0.50)</option>
+                </select>
+                
+                <div class="radio-group" style="margin-top: 10px;">
+                    <label><input type="radio" name="actionType" value="increase" checked> Увеличить <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: text-bottom; margin-left: 2px;"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></label><br>
+                    <label><input type="radio" name="actionType" value="decrease"> Уменьшить <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: text-bottom; margin-left: 2px;"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg></label>
+                </div>
+            </div>
+
+            <div class="control-box">
+                <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top; margin-right: 5px;">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                    </svg>Пересчет по дате
+                </h3>
+                <label>Выберите день:</label>
+                <select id="dateSelect">
+                    <!-- Заполняется динамически -->
+                </select>
+                <button id="btnRecalcDate" class="btn">Пересчитать на дату</button>
+            </div>
+
+            <div class="control-box">
+                <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top; margin-right: 5px;">
+                        <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM5 7h4v4H5zm6 0h4v4h-4zm6 0h4v4h-4zM5 13h4v4H5zm6 0h4v4h-4zm6 0h4v4h-4z"/>
+                    </svg>Пересчет по товару
+                </h3>
+                <label>Выберите товар:</label>
+                <select id="itemSelect">
+                    <!-- Заполняется динамически -->
+                </select>
+                <button id="btnRecalcItem" class="btn">Пересчитать по горизонтали</button>
+            </div>
+            
+            <div class="control-box" style="justify-content: center;">
+                <button id="btnRecalcAll" class="btn" style="background: #551100; height: 100%;">Сброс и Пересчет Всей Таблицы</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="priceTable">
+                <thead>
+                    <tr id="tableHead">
+                        <!-- Заголовки дат -->
+                    </tr>
+                </thead>
+                <tbody id="priceBody">
+                    <!-- Строки с ценами -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+</body>
+</html>
