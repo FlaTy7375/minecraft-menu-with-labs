@@ -228,3 +228,74 @@ td.max-cell {
     color: #00ffff;
     text-shadow: 0 0 5px #00ffff;
 }
+
+/* Инвентарь на странице Лабы 9 */
+.inventory-trigger {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 10, 15, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: rgba(0, 20, 30, 0.95);
+    border: 4px solid #00aaaa;
+    padding: 15px 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 0 40px rgba(0, 170, 170, 0.5);
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.inv-slot {
+    aspect-ratio: 1;
+    background: rgba(0,0,0,0.6);
+    border: 3px inset #005555;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.inv-slot:hover {
+    border-style: outset;
+    border-color: #00ffff;
+    background: rgba(0, 80, 80, 0.5);
+    transform: scale(1.05);
+}
+
+.inv-slot img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+

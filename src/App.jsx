@@ -52,6 +52,62 @@ const CAM_MUSHROOM = new THREE.Vector3(19.34, 10.91, 5.14)
 const CAM_NETHER   = new THREE.Vector3(-18.68, 10.17, -4.54)
 const CAM_END      = new THREE.Vector3(-20.27, 11.24, -5.30)
 
+// Статичные карты lookup вместо тернарных цепочек
+const WORLD_IFRAME_SRC = {
+  desert:   '/labs/lab2/html/index.html',
+  snow:     '/labs/lab3/html/index.html',
+  jungle:   '/labs/lab4/html/index.html',
+  ocean:    '/labs/lab5/index.html',
+  mushroom: '/labs/lab6/html/index.html',
+  nether:   '/labs/lab7/html/index.html',
+  end:      '/labs/lab8/html/index.html',
+  default:  '/labs/lab1/index.html',
+}
+
+const WORLD_LAB_IMAGE = {
+  desert:   '/images/lab2.png',
+  snow:     '/images/lab3.png',
+  jungle:   '/images/lab4.png',
+  ocean:    '/images/lab5.png',
+  mushroom: '/images/lab6.png',
+  nether:   '/images/lab7.png',
+  end:      '/images/lab8.png',
+  deep_dark:'/images/lab9.png',
+}
+
+const WORLD_LAB_TITLE = {
+  desert:   'Лабораторная работа №2',
+  snow:     'Лабораторная работа №3',
+  jungle:   'Лабораторная работа №4',
+  ocean:    'Лабораторная работа №5',
+  mushroom: 'Лабораторная работа №6',
+  nether:   'Лабораторная работа №7',
+  end:      'Лабораторная работа №8',
+  deep_dark:'Лабораторная работа №9',
+  default:  'Лабораторная работа №1',
+}
+
+const WALL_CONFIGS = {
+  default:  { pos: [-4.8,  9.2, 0.97], rot: [0, 0, 0] },
+  desert:   { pos: [-0.86, 9.2, -4.85], rot: [0, -Math.PI / 2, 0] },
+  snow:     { pos: [-1.06, 9.2, -5],    rot: [0, -Math.PI / 2, 0] },
+  jungle:   { pos: [-4.85, 9.2, 1.1],   rot: [0, 0, 0] },
+  ocean:    { pos: [0.9,   9.2, 5.15],  rot: [0, Math.PI / 2, 0] },
+  mushroom: { pos: [0.9,   9.2, 5.15],  rot: [0, Math.PI / 2, 0] },
+  nether:   { pos: [-0.9,  9.2, -4.75], rot: [0, -Math.PI / 2, 0] },
+  end:      { pos: [-0.9,  9.2, -5.25], rot: [0, -Math.PI / 2, 0] },
+}
+
+const WORLD_EXPOSURE = {
+  bed: 1.1, desert: 1.0, snow: 1.3, jungle: 0.5,
+  ocean: 1.1, mushroom: 0.85, nether: 0.7, end: 0.75,
+}
+
+const CHEST_ROTATION = {
+  bed: 0, desert: -Math.PI / 2, snow: -Math.PI / 2, jungle: 0,
+  ocean: Math.PI / 2, mushroom: Math.PI / 2, nether: -Math.PI / 2, end: -Math.PI / 2,
+}
+
 function CameraController({ activeWorld, controlsRef }) {
   const { camera } = useThree()
   const animating = useRef(false)
@@ -237,20 +293,9 @@ function WallLabel({ position, rotation, onClick, imageSrc = '/images/lab1.png',
 
 function ToneMappingUpdater({ activeWorld }) {
   const { gl } = useThree()
-  const getExposure = (w) => {
-    if (w === 'bed')      return 1.1
-    if (w === 'desert')   return 1.0
-    if (w === 'snow')     return 1.3
-    if (w === 'jungle')   return 0.5
-    if (w === 'ocean')    return 1.1
-    if (w === 'mushroom') return 0.85
-    if (w === 'nether')   return 0.7
-    if (w === 'end')      return 0.75
-    return 2.2
-  }
-  useFrame(() => {
-    gl.toneMappingExposure = getExposure(activeWorld)
-  })
+  useEffect(() => {
+    gl.toneMappingExposure = WORLD_EXPOSURE[activeWorld] ?? 2.2
+  }, [gl, activeWorld])
   return null
 }
 
@@ -387,9 +432,12 @@ function SceneLighting({ activeWorld }) {
 }
 
 function App() {
+  const queryParams = new URLSearchParams(window.location.search);
+  const initialWorld = queryParams.get('world') || 'bed';
+  
   const [chestOpen, setChestOpen] = useState(false)
-  const [started, setStarted] = useState(false)
-  const [activeWorld, setActiveWorld] = useState('bed')
+  const [started, setStarted] = useState(queryParams.has('world'))
+  const [activeWorld, setActiveWorld] = useState(initialWorld)
   const [wallModal, setWallModal] = useState(false)
   const [transitioning, setTransitioning] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600)
@@ -399,6 +447,7 @@ function App() {
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
   const chestRef = useRef()
   const controlsRef = useRef()
   const transitionTimer = useRef()
@@ -407,6 +456,10 @@ function App() {
   function handleSelectWorld(world) {
     if (world === 'deep_dark') {
       window.location.href = '/labs/lab9/html/index.html'
+      return
+    }
+    if (world === 'amethyst') {
+      window.location.href = '/labs/lab10/html/index.html'
       return
     }
     setActiveWorld(world)
@@ -422,7 +475,7 @@ function App() {
     chestRef.current?.closeChest()
   }
 
-  const isDesert = activeWorld === 'desert'
+  const chestRotY = CHEST_ROTATION[activeWorld] ?? 0
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
@@ -523,23 +576,12 @@ function App() {
               <directionalLight position={[-30, 40, 0]} color="#3366dd" intensity={2.0} castShadow={false} />
             </>
           )}
-          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, activeWorld === 'bed' ? 0 : activeWorld === 'desert' ? -Math.PI / 2 : activeWorld === 'snow' ? -Math.PI / 2 : activeWorld === 'jungle' ? 0 : activeWorld === 'ocean' ? Math.PI / 2 : activeWorld === 'mushroom' ? Math.PI / 2 : activeWorld === 'nether' ? -Math.PI / 2 : activeWorld === 'end' ? -Math.PI / 2 : 0, 0]} onToggle={setChestOpen} />
+          <Chest ref={chestRef} position={[0, 7.4, 0]} rotation={[0, chestRotY, 0]} onToggle={setChestOpen} />
 
-          {/* Превью лабы на стене — текстура на плоскости */}
           {activeWorld !== 'bed' && (() => {
-            const wallConfigs = {
-              default:  { pos: [-4.8,  9.2, 0.97], rot: [0, 0, 0] },
-              desert:   { pos: [-0.86,   9.2, -4.85], rot: [0,  -Math.PI / 2, 0] },
-              snow:     { pos: [-1.06,  9.2, -5], rot: [0,  -Math.PI / 2, 0] },
-              jungle:   { pos: [-4.85, 9.2, 1.1], rot: [0, 0, 0] },
-              ocean:    { pos: [0.9,  9.2,  5.15], rot: [0, Math.PI / 2, 0] },
-              mushroom: { pos: [0.9,  9.2,  5.15], rot: [0, Math.PI / 2, 0] },
-              nether:   { pos: [-0.9,  9.2, -4.75], rot: [0,  -Math.PI / 2, 0] },
-              end:      { pos: [-0.9,  9.2, -5.25], rot: [0,  -Math.PI / 2, 0] },
-            }
-            const cfg = wallConfigs[activeWorld]
+            const cfg = WALL_CONFIGS[activeWorld]
             if (!cfg) return null
-            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : activeWorld === 'snow' ? '/images/lab3.png' : activeWorld === 'jungle' ? '/images/lab4.png' : activeWorld === 'ocean' ? '/images/lab5.png' : activeWorld === 'mushroom' ? '/images/lab6.png' : activeWorld === 'nether' ? '/images/lab7.png' : activeWorld === 'end' ? '/images/lab8.png' : activeWorld === 'deep_dark' ? '/images/lab9.png' : '/images/lab1.png'
+            const labImage = WORLD_LAB_IMAGE[activeWorld] ?? '/images/lab1.png'
             return (
               <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} imageSrc={labImage} removeWhite={activeWorld !== 'jungle'} />
             )
@@ -647,7 +689,7 @@ function App() {
               zIndex: 10,
             }}>✕</button>
             <iframe
-              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : activeWorld === 'snow' ? '/labs/lab3/html/index.html' : activeWorld === 'jungle' ? '/labs/lab4/html/index.html' : activeWorld === 'ocean' ? '/labs/lab5/index.html' : activeWorld === 'mushroom' ? '/labs/lab6/html/index.html' : activeWorld === 'nether' ? '/labs/lab7/html/index.html' : activeWorld === 'end' ? '/labs/lab8/html/index.html' : activeWorld === 'deep_dark' ? '/labs/lab9/html/index.html' : '/labs/lab1/index.html'}
+              src={WORLD_IFRAME_SRC[activeWorld] ?? '/labs/lab1/index.html'}
               style={{
                 position: 'relative',
                 zIndex: 5,
@@ -656,7 +698,7 @@ function App() {
                 border: 'none',
                 background: 'transparent',
               }}
-              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : activeWorld === 'snow' ? 'Лабораторная работа №3' : activeWorld === 'jungle' ? 'Лабораторная работа №4' : activeWorld === 'ocean' ? 'Лабораторная работа №5' : activeWorld === 'mushroom' ? 'Лабораторная работа №6' : activeWorld === 'nether' ? 'Лабораторная работа №7' : activeWorld === 'end' ? 'Лабораторная работа №8' : activeWorld === 'deep_dark' ? 'Лабораторная работа №9' : 'Лабораторная работа №1'}
+              title={WORLD_LAB_TITLE[activeWorld] ?? 'Лабораторная работа №1'}
             />
           </div>
         </div>

@@ -7,6 +7,27 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
+    <!-- Кнопка инвентаря -->
+    <div class="inventory-trigger">
+        <button id="btnOpenInventory" class="sculk-btn" title="Открыть инвентарь миров">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1 14H5c-.55 0-1-.45-1-1v-5h16v5c0 .55-.45 1-1 1zm1-8H4V6h16v4z"/>
+            </svg>
+            Инвентарь
+        </button>
+    </div>
+
+    <!-- Модальное окно инвентаря -->
+    <div id="inventoryModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="text-align: center; color: #00ffff; margin-top: 0; font-family: 'Press Start 2P', monospace; font-size: 12px; text-transform: uppercase;">Сундук (Локации)</h3>
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- Сюда добавятся слоты из JS -->
+            </div>
+            <button id="btnCloseInventory" class="sculk-btn" style="width: 100%; margin-top: 20px;">Закрыть</button>
+        </div>
+    </div>
+
     <div class="container">
         <h2 class="title-banner">Исследование Скалк-сенсоров</h2>
         <div class="subtitle">Измерение случайных сигналов в Древнем городе</div>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №10 - Аметистовая жеода</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Использование возможности известной библиотеки JQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <!-- Инвентарь (навигация) -->
+    <div class="inventory-trigger">
+        <button id="btnOpenInventory" class="crystal-btn" title="Выбор локации">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1 14H5c-.55 0-1-.45-1-1v-5h16v5c0 .55-.45 1-1 1zm1-8H4V6h16v4z"/>
+            </svg>
+            Инвентарь
+        </button>
+    </div>
+
+    <!-- Модальное окно инвентаря -->
+    <div id="inventoryModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Сундук (Локации)</h3>
+            <div class="inventory-grid" id="inventoryGrid"></div>
+            <button id="btnCloseInventory" class="crystal-btn" style="width: 100%; margin-top: 20px;">Закрыть</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="title">Аметистовые Резонансы (Клиент-Сервер Node.js)</h1>
+        <div class="subtitle">Использование модуля fs для хранения массивов данных</div>
+        
+        <div class="controls-panel">
+            <div class="main-controls">
+                <button id="btnGenerate" class="crystal-btn primary-btn">Сгенерировать кристаллы</button>
+            </div>
+            
+            <div class="format-settings">
+                <div class="settings-title">Формат дробей:</div>
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="fmt-checkbox" value="2">
+                    <span class="checkmark"></span>
+                    2 знака
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox" class="fmt-checkbox" value="4">
+                    <span class="checkmark"></span>
+                    4 знака
+                </label>
+            </div>
+            
+            <div class="sort-controls">
+                <button id="btnSortAsc" class="crystal-btn action-btn">Сортировать ▲ (возр.)</button>
+                <button id="btnSortDesc" class="crystal-btn action-btn">Сортировать ▼ (убыв.)</button>
+            </div>
+        </div>
+
+        <div class="tables-grid">
+            <div class="table-card">
+                <h3>До обработки (из data_raw.json)</h3>
+                <div id="rawTableContainer" class="table-wrapper">
+                    <div class="placeholder">Ожидание генерации...</div>
+                </div>
+            </div>
+            
+            <div class="table-card">
+                <h3>После обработки (результат из файла)</h3>
+                <div id="sortedTableContainer" class="table-wrapper">
+                    <div class="placeholder">Ожидание сортировки...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DHTML скрипт на базе jQuery -->
+    <script src="../js/script.js"></script>
+</body>
+</html>

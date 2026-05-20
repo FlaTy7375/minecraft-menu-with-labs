@@ -92,4 +92,54 @@ document.addEventListener('DOMContentLoaded', () => {
             sortedList.appendChild(li);
         });
     }
+
+    // Логика инвентаря для быстрого перехода к другим мирам
+    const btnOpenInventory = document.getElementById('btnOpenInventory');
+    const btnCloseInventory = document.getElementById('btnCloseInventory');
+    const inventoryModal = document.getElementById('inventoryModal');
+    const inventoryGrid = document.getElementById('inventoryGrid');
+
+    const WORLDS = [
+        { id: 'default', img: '/images/dirt.webp', label: 'Обычный мир (Лаба 1)' },
+        { id: 'desert',  img: '/images/desert.png', label: 'Пустыня (Лаба 2)' },
+        { id: 'snow',    img: '/images/snow.png', label: 'Снежный мир (Лаба 3)' },
+        { id: 'jungle',  img: '/images/лианы.webp', label: 'Джунгли (Лаба 4)' },
+        { id: 'ocean',   img: '/images/fish.webp', label: 'Океан (Лаба 5)' },
+        { id: 'mushroom',img: '/images/mushroom.png', label: 'Грибной (Лаба 6)' },
+        { id: 'nether',  img: '/images/obsidian.webp', label: 'Незер (Лаба 7)' },
+        { id: 'end',     img: '/images/end.webp', label: 'Край (Лаба 8)' },
+        { id: 'deep_dark', img: '/images/sculk.png', label: 'Древний город (Лаба 9 - Текущая)' },
+        { id: 'amethyst', img: '/images/amethyst.png', label: 'Аметистовая жеода (Лаба 10)' },
+    ];
+
+    WORLDS.forEach(w => {
+        const slot = document.createElement('div');
+        slot.className = 'inv-slot';
+        slot.title = w.label;
+        
+        const img = document.createElement('img');
+        img.src = w.img;
+        slot.appendChild(img);
+        
+        slot.addEventListener('click', () => {
+            if (w.id === 'deep_dark') {
+                inventoryModal.classList.add('hidden'); // Мы уже здесь
+            } else if (w.id === 'amethyst') {
+                window.location.href = '/labs/lab10/html/index.html';
+            } else {
+                // Перенаправляем обратно в React-приложение (в корень) и передаем параметр
+                window.location.href = `/?world=${w.id}`;
+            }
+        });
+        
+        inventoryGrid.appendChild(slot);
+    });
+
+    btnOpenInventory.addEventListener('click', () => {
+        inventoryModal.classList.remove('hidden');
+    });
+
+    btnCloseInventory.addEventListener('click', () => {
+        inventoryModal.classList.add('hidden');
+    });
 });

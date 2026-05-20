@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #0b0212;
+    color: #e5b3ff;
+    box-sizing: border-box;
+}
+
+/* Тема Аметистовой жеоды: темно-фиолетовый, сиреневый, розовый неон */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(20, 5, 30, 0.9);
+    border: 4px solid #cc00ff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(204, 0, 255, 0.4), inset 0 0 20px rgba(100, 0, 150, 0.5);
+    backdrop-filter: blur(8px);
+}
+
+.title {
+    font-family: 'Press Start 2P', monospace;
+    color: #ff99ff;
+    text-shadow: 3px 3px 0px #660099, 0 0 15px #cc00ff;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+.subtitle {
+    text-align: center;
+    color: #d896ff;
+    font-size: 14px;
+    margin-bottom: 30px;
+    border-bottom: 2px dashed #9900cc;
+    padding-bottom: 15px;
+}
+
+.controls-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(30, 0, 50, 0.6);
+    border: 2px solid #8800cc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Индивидуальный дизайн кнопок (Кристаллы) */
+.crystal-btn {
+    background: linear-gradient(135deg, #4d0066, #9900cc);
+    color: #ffffff;
+    border: 2px solid #ff66ff;
+    padding: 12px 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.2s;
+    box-shadow: 3px 3px 0px #330044;
+    text-transform: uppercase;
+    position: relative;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.crystal-btn:hover {
+    background: linear-gradient(135deg, #660099, #cc00ff);
+    box-shadow: 0 0 15px #ff66ff;
+    transform: translateY(-2px);
+}
+
+.crystal-btn:active {
+    transform: translateY(2px);
+    box-shadow: 1px 1px 0px #330044;
+}
+
+.primary-btn {
+    border-color: #00ffff;
+    background: linear-gradient(135deg, #004d66, #0099cc);
+}
+.primary-btn:hover {
+    background: linear-gradient(135deg, #006699, #00ccff);
+    box-shadow: 0 0 15px #00ffff;
+}
+
+.format-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #1a0033;
+    padding: 10px 20px;
+    border: 1px solid #ff66ff;
+    box-shadow: inset 0 0 10px #4d0066;
+}
+
+.settings-title {
+    font-size: 12px;
+    color: #ff99ff;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Кастомные чекбоксы */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #d896ff;
+    user-select: none;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 16px;
+    width: 16px;
+    background-color: #330044;
+    border: 2px solid #cc00ff;
+}
+
+.custom-checkbox:hover input ~ .checkmark {
+    background-color: #4d0066;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: #cc00ff;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.custom-checkbox .checkmark:after {
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.tables-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.table-card {
+    background: rgba(20, 0, 40, 0.7);
+    border: 2px solid #9900cc;
+    padding: 15px;
+}
+
+.table-card h3 {
+    font-family: 'Press Start 2P', monospace;
+    color: #ff99ff;
+    font-size: 10px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #4d0066;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    background: #0d001a;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder {
+    color: #660099;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    0% { opacity: 0.5; text-shadow: 0 0 5px #cc00ff; }
+    100% { opacity: 1; text-shadow: 0 0 15px #ff66ff; }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #4d0066;
+    padding: 6px;
+    text-align: center;
+    font-size: 12px;
+    color: #d896ff;
+    transition: background 0.2s;
+}
+
+td:hover {
+    background: #4d0066;
+    color: #ffffff;
+}
+
+/* Инвентарь */
+.inventory-trigger {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10, 0, 20, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: rgba(30, 0, 50, 0.95);
+    border: 4px solid #cc00ff;
+    padding: 15px 20px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 0 40px rgba(204, 0, 255, 0.6);
+}
+
+.modal-content h3 {
+    font-family: 'Press Start 2P', monospace;
+    color: #ff99ff;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.inv-slot {
+    aspect-ratio: 1;
+    background: rgba(0,0,0,0.6);
+    border: 3px inset #660099;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inv-slot:hover {
+    border-style: outset;
+    border-color: #ff66ff;
+    background: rgba(77, 0, 102, 0.5);
+    transform: scale(1.05);
+}
+
+.inv-slot img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
