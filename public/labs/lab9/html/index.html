@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №9 - Древний город</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="title-banner">Исследование Скалк-сенсоров</h2>
+        <div class="subtitle">Измерение случайных сигналов в Древнем городе</div>
+
+        <div class="controls">
+            <button id="btnGenerate" class="sculk-btn">Сканировать область (сгенерировать массив)</button>
+        </div>
+
+        <div class="results-grid">
+            <div class="panel">
+                <h3>Карта сигналов (10x10)</h3>
+                <div id="tableContainer" class="sculk-table-wrapper">
+                    <!-- Таблица будет сгенерирована здесь через DHTML -->
+                    <div class="placeholder-text">Ожидание активации скалк-шрикера...</div>
+                </div>
+            </div>
+
+            <div class="panel side-panel">
+                <h3>Анализ данных</h3>
+                
+                <div class="data-box">
+                    <span class="label">Максимальный сигнал (Варден близко!):</span>
+                    <span id="maxElement" class="value highlight-max">-</span>
+                </div>
+
+                <div class="data-box">
+                    <span class="label">Отсортированный лог сигналов:</span>
+                    <div id="sortedListContainer" class="sorted-container">
+                        <ul id="sortedList" class="custom-list">
+                            <!-- Элементы списка -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Подключение файла бизнес-логики как модуля -->
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>
