@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №6 - Грибной Автосалон</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="title-banner">Грибной Автосалон</h2>
+
+        <div id="shop-container" class="shop-panel">
+            <!-- Сюда будет динамически генерироваться DOM -->
+        </div>
+
+        <div class="controls-container">
+            <div class="control-box">
+                <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top; margin-right: 5px;"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H6.5c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM7.5 16c-.83 0-1.5-.67-1.5-1.5S6.67 13 7.5 13s1.5.67 1.5 1.5S8.33 16 7.5 16zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>Новый автомобиль</h3>
+                <label>Выбрать марку (из Map):</label>
+                <select id="newCarSelect"></select>
+                
+                <label>Позиция вставки (№):</label>
+                <select id="insertPositionSelect">
+                    <!-- Заполняется динамически -->
+                </select>
+                
+                <button id="btnInsertCar" class="btn">Вставить в список</button>
+            </div>
+
+            <div class="control-box">
+                <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top; margin-right: 5px;"><path d="M22 10v12H2V10l7 3v-4l7 3v-4l6 2zM6.5 19h3v-3h-3v3zm7 0h3v-3h-3v3z"/><path d="M12 7h2v2h-2zM17 6h2v2h-2z" /></svg>Смена производителя</h3>
+                <label>Текст заголовка (из Set):</label>
+                <select id="newHeaderSelect"></select>
+                <button id="btnChangeHeader" class="btn">Изменить заголовок</button>
+            </div>
+
+            <div class="control-box">
+                <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: top; margin-right: 5px;"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/><path d="M8 12h8v2H8zm0 4h8v2H8zm0-8h3v2H8z"/></svg>Добавить описание</h3>
+                <label>Новый параграф (из Set):</label>
+                <select id="newParaSelect"></select>
+                
+                <label>Ориентир:</label>
+                <select id="paraTargetSelect">
+                    <option value="para-1">Первый абзац</option>
+                    <option value="para-2">Второй абзац</option>
+                </select>
+                
+                <label>Размещение:</label>
+                <select id="paraPosSelect">
+                    <option value="above">Выше (beforebegin)</option>
+                    <option value="below">Ниже (afterend)</option>
+                </select>
+                
+                <button id="btnInsertPara" class="btn">Вставить параграф</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+</body>
+</html>
