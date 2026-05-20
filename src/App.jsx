@@ -535,7 +535,7 @@ function App() {
             }
             const cfg = wallConfigs[activeWorld]
             if (!cfg) return null
-            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : activeWorld === 'snow' ? '/images/lab3.png' : activeWorld === 'jungle' ? '/images/lab4.png' : activeWorld === 'ocean' ? '/images/lab5.png' : activeWorld === 'mushroom' ? '/images/lab6.png' : activeWorld === 'nether' ? '/images/lab7.png' : '/images/lab1.png'
+            const labImage = activeWorld === 'desert' ? '/images/lab2.png' : activeWorld === 'snow' ? '/images/lab3.png' : activeWorld === 'jungle' ? '/images/lab4.png' : activeWorld === 'ocean' ? '/images/lab5.png' : activeWorld === 'mushroom' ? '/images/lab6.png' : activeWorld === 'nether' ? '/images/lab7.png' : activeWorld === 'end' ? '/images/lab8.png' : '/images/lab1.png'
             return (
               <WallLabel position={cfg.pos} rotation={cfg.rot} onClick={() => setWallModal(true)} imageSrc={labImage} removeWhite={activeWorld !== 'jungle'} />
             )
@@ -643,7 +643,7 @@ function App() {
               zIndex: 10,
             }}>✕</button>
             <iframe
-              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : activeWorld === 'snow' ? '/labs/lab3/html/index.html' : activeWorld === 'jungle' ? '/labs/lab4/html/index.html' : activeWorld === 'ocean' ? '/labs/lab5/index.html' : activeWorld === 'mushroom' ? '/labs/lab6/html/index.html' : activeWorld === 'nether' ? '/labs/lab7/html/index.html' : '/labs/lab1/index.html'}
+              src={activeWorld === 'desert' ? '/labs/lab2/html/index.html' : activeWorld === 'snow' ? '/labs/lab3/html/index.html' : activeWorld === 'jungle' ? '/labs/lab4/html/index.html' : activeWorld === 'ocean' ? '/labs/lab5/index.html' : activeWorld === 'mushroom' ? '/labs/lab6/html/index.html' : activeWorld === 'nether' ? '/labs/lab7/html/index.html' : activeWorld === 'end' ? '/labs/lab8/html/index.html' : '/labs/lab1/index.html'}
               style={{
                 position: 'relative',
                 zIndex: 5,
@@ -652,7 +652,7 @@ function App() {
                 border: 'none',
                 background: 'transparent',
               }}
-              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : activeWorld === 'snow' ? 'Лабораторная работа №3' : activeWorld === 'jungle' ? 'Лабораторная работа №4' : activeWorld === 'ocean' ? 'Лабораторная работа №5' : activeWorld === 'mushroom' ? 'Лабораторная работа №6' : activeWorld === 'nether' ? 'Лабораторная работа №7' : 'Лабораторная работа №1'}
+              title={activeWorld === 'desert' ? 'Лабораторная работа №2' : activeWorld === 'snow' ? 'Лабораторная работа №3' : activeWorld === 'jungle' ? 'Лабораторная работа №4' : activeWorld === 'ocean' ? 'Лабораторная работа №5' : activeWorld === 'mushroom' ? 'Лабораторная работа №6' : activeWorld === 'nether' ? 'Лабораторная работа №7' : activeWorld === 'end' ? 'Лабораторная работа №8' : 'Лабораторная работа №1'}
             />
           </div>
         </div>

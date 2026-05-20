@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: transparent;
+    color: #eebbff;
+    box-sizing: border-box;
+}
+
+/* Измерение Края (The End) - Темно-фиолетовый, звездный фон (ожидается прозрачным, но элементы будут в этом стиле) */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(15, 0, 30, 0.9);
+    border: 4px solid #aa00ff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 0 30px rgba(170, 0, 255, 0.5), inset 0 0 20px rgba(170, 0, 255, 0.3);
+    backdrop-filter: blur(8px);
+}
+
+.title-banner {
+    font-family: 'Press Start 2P', monospace;
+    color: #ee88ff;
+    text-shadow: 3px 3px 0px #440066;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 30px;
+    border-bottom: 4px dashed #8800cc;
+    padding-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.controls-panel {
+    background: rgba(40, 10, 60, 0.6);
+    border: 2px solid #8800cc;
+    padding: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input-group label {
+    font-size: 12px;
+    color: #cc99ff;
+    font-weight: bold;
+}
+
+.input-group input {
+    padding: 8px;
+    background: #2a0044;
+    border: 2px solid #aa00ff;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    width: 120px;
+    text-align: center;
+    outline: none;
+}
+
+.input-group input:focus {
+    box-shadow: 0 0 8px #ee88ff;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.btn {
+    color: #fff;
+    border: 2px solid #ee88ff;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    transition: all 0.3s;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.btn-play {
+    background: #660099;
+}
+
+.btn-play:hover {
+    background: #8800cc;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #aa00ff;
+}
+
+.btn-stop {
+    background: #990033;
+    border-color: #ff88aa;
+}
+
+.btn-stop:hover {
+    background: #cc0044;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #ff0044;
+}
+
+.btn-large {
+    font-size: 14px;
+    padding: 15px 30px;
+    background: #5500aa;
+    margin-top: 20px;
+}
+
+.btn-large:hover {
+    background: #7700ff;
+    box-shadow: 0 0 20px #cc66ff;
+}
+
+.slider-frame {
+    position: relative;
+    border: 4px solid #aa00ff;
+    background: #000;
+    padding: 10px;
+    box-shadow: 0 0 20px rgba(170, 0, 255, 0.4);
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    background: #110022;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#slider-image {
+    max-width: 100%;
+    max-height: 100%;
+    transition: opacity 0.4s ease-in-out;
+    object-fit: cover;
+}
+
+.scanline {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(170,0,255,0.1) 50%, rgba(170,0,255,0.1));
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.caption {
+    background: #1a0033;
+    color: #ee88ff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    text-align: center;
+    padding: 15px;
+    border-top: 2px solid #aa00ff;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+/* Fullscreen Overlay Styling */
+#fullscreen-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(10, 0, 20, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+#fullscreen-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.overlay-content {
+    text-align: center;
+    animation: float 3s ease-in-out infinite;
+    padding: 40px;
+    border: 4px dashed #aa00ff;
+    background: rgba(30, 0, 60, 0.8);
+    box-shadow: 0 0 50px rgba(170, 0, 255, 0.8);
+}
+
+.overlay-content h1 {
+    font-family: 'Press Start 2P', monospace;
+    color: #ff88ff;
+    text-shadow: 4px 4px 0px #660099;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.overlay-content p {
+    font-size: 16px;
+    color: #eebbff;
+    line-height: 1.6;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
